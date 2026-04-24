@@ -62,7 +62,7 @@ export function HomeHero() {
               <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-soft/70 mb-1">
                 {t.hero.tractsLabel}
               </dt>
-              <dd className="font-display tnum text-xl text-kane-blue-ink">144</dd>
+              <dd className="font-display tnum text-xl text-kane-blue-ink">104</dd>
             </div>
             <div>
               <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-soft/70 mb-1">

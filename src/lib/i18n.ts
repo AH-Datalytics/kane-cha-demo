@@ -427,7 +427,7 @@ export const STRINGS: Record<Locale, StringsTree> = {
       },
       indicator: "Indicator",
       geoLevel: "Geographic level",
-      currentlyShowing: "Currently showing: census tract choropleth (144 Kane County tracts).",
+      currentlyShowing: "Currently showing: census tract choropleth (104 Kane County tracts).",
       demographicSlice: "Demographic slice",
       overlays: "Overlays",
       sviToggle: "CDC Social Vulnerability Index",
@@ -435,7 +435,7 @@ export const STRINGS: Record<Locale, StringsTree> = {
       nowViewing: "Now viewing",
       loadingGeometry: "Loading Kane County geometry…",
       countyAggregate: "County aggregate",
-      countyAggregateBody: "Kane County weighted average across all 144 tracts.",
+      countyAggregateBody: "Kane County weighted average across all 104 tracts.",
       highestTract: "Highest tract",
       countyVsIllinois: "County vs. Illinois",
       countyVsIllinoisBody: "Kane County compared to the Illinois statewide rate (IDPH 2024).",
@@ -668,7 +668,7 @@ export const STRINGS: Record<Locale, StringsTree> = {
       methodologyItems: [
         {
           title: "Tract-level estimates",
-          body: "Small-area estimates use CDC PLACES, with ACS 5-year as the population base. Kane County has 144 census tracts and six aggregate geographies (county, municipality, ZIP, Planning Area, plus hospital service area where data permit).",
+          body: "Small-area estimates use CDC PLACES, with ACS 5-year as the population base. Kane County has 104 census tracts and six aggregate geographies (county, municipality, ZIP, Planning Area, plus hospital service area where data permit).",
         },
         {
           title: "Demographic disaggregation",
@@ -902,7 +902,7 @@ export const STRINGS: Record<Locale, StringsTree> = {
       },
       indicator: "Indicador",
       geoLevel: "Nivel geográfico",
-      currentlyShowing: "Mostrando actualmente: mapa coroplético por sección censal (144 secciones del Condado de Kane).",
+      currentlyShowing: "Mostrando actualmente: mapa coroplético por sección censal (104 secciones del Condado de Kane).",
       demographicSlice: "Grupo demográfico",
       overlays: "Superposiciones",
       sviToggle: "Índice de Vulnerabilidad Social de los CDC",
@@ -910,7 +910,7 @@ export const STRINGS: Record<Locale, StringsTree> = {
       nowViewing: "Ahora viendo",
       loadingGeometry: "Cargando la geometría del Condado de Kane…",
       countyAggregate: "Agregado del condado",
-      countyAggregateBody: "Promedio ponderado del Condado de Kane entre las 144 secciones.",
+      countyAggregateBody: "Promedio ponderado del Condado de Kane entre las 104 secciones.",
       highestTract: "Sección más alta",
       countyVsIllinois: "Condado vs. Illinois",
       countyVsIllinoisBody: "Condado de Kane en comparación con la tasa estatal de Illinois (IDPH 2024).",
@@ -1143,7 +1143,7 @@ export const STRINGS: Record<Locale, StringsTree> = {
       methodologyItems: [
         {
           title: "Estimaciones a nivel de sección censal",
-          body: "Las estimaciones de áreas pequeñas utilizan CDC PLACES, con ACS de 5 años como base poblacional. El Condado de Kane tiene 144 secciones censales y seis geografías agregadas (condado, municipio, código postal, Área de Planificación, además del área de servicio hospitalario cuando los datos lo permiten).",
+          body: "Las estimaciones de áreas pequeñas utilizan CDC PLACES, con ACS de 5 años como base poblacional. El Condado de Kane tiene 104 secciones censales y seis geografías agregadas (condado, municipio, código postal, Área de Planificación, además del área de servicio hospitalario cuando los datos lo permiten).",
         },
         {
           title: "Desagregación demográfica",
@@ -1376,7 +1376,7 @@ export const STRINGS: Record<Locale, StringsTree> = {
       },
       indicator: "Wskaźnik",
       geoLevel: "Poziom geograficzny",
-      currentlyShowing: "Obecnie wyświetlane: kartogram obwodów spisowych (144 obwody Hrabstwa Kane).",
+      currentlyShowing: "Obecnie wyświetlane: kartogram obwodów spisowych (104 obwody Hrabstwa Kane).",
       demographicSlice: "Grupa demograficzna",
       overlays: "Nakładki",
       sviToggle: "Indeks Podatności Społecznej CDC",
@@ -1384,7 +1384,7 @@ export const STRINGS: Record<Locale, StringsTree> = {
       nowViewing: "Obecnie wyświetlane",
       loadingGeometry: "Ładowanie geometrii Hrabstwa Kane…",
       countyAggregate: "Zbiorcze dla hrabstwa",
-      countyAggregateBody: "Średnia ważona Hrabstwa Kane dla wszystkich 144 obwodów.",
+      countyAggregateBody: "Średnia ważona Hrabstwa Kane dla wszystkich 104 obwodów.",
       highestTract: "Najwyższy obwód",
       countyVsIllinois: "Hrabstwo vs. Illinois",
       countyVsIllinoisBody: "Hrabstwo Kane w porównaniu ze stawką stanową Illinois (IDPH 2024).",
@@ -1617,7 +1617,7 @@ export const STRINGS: Record<Locale, StringsTree> = {
       methodologyItems: [
         {
           title: "Szacunki na poziomie obwodu",
-          body: "Szacunki dla małych obszarów wykorzystują CDC PLACES, z ACS 5-letnim jako podstawą populacyjną. Hrabstwo Kane ma 144 obwody spisowe i sześć geografii zbiorczych (hrabstwo, gmina, kod pocztowy, Obszar Planowania oraz obszar usług szpitalnych, gdy pozwalają dane).",
+          body: "Szacunki dla małych obszarów wykorzystują CDC PLACES, z ACS 5-letnim jako podstawą populacyjną. Hrabstwo Kane ma 104 obwody spisowe i sześć geografii zbiorczych (hrabstwo, gmina, kod pocztowy, Obszar Planowania oraz obszar usług szpitalnych, gdy pozwalają dane).",
         },
         {
           title: "Dezagregacja demograficzna",

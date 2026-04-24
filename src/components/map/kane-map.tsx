@@ -152,18 +152,16 @@ export function KaneMap({
   const style = (feature?: Feature): PathOptions => {
     if (!feature) return {};
     const v = getDisplayValue(feature);
-    // Boundary color changes with geoLevel to show the grouping
-    let borderColor = "rgba(8, 110, 159, 0.25)";
-    let borderWeight = 0.4;
-    if (geoLevel === "planning-area" || geoLevel === "municipality" || geoLevel === "zip") {
-      borderColor = "rgba(21, 52, 82, 0.35)";
-      borderWeight = 0.3;
-    }
+    const isAggregate =
+      geoLevel === "county" ||
+      geoLevel === "planning-area" ||
+      geoLevel === "municipality" ||
+      geoLevel === "zip";
     return {
       fillColor: getColor(v),
-      weight: borderWeight,
+      weight: isAggregate ? 0 : 0.4,
       opacity: 1,
-      color: borderColor,
+      color: isAggregate ? "transparent" : "rgba(8, 110, 159, 0.25)",
       fillOpacity: 0.85,
     };
   };

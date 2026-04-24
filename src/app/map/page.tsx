@@ -133,7 +133,33 @@ export default function MapPage() {
                   );
                 })}
               </div>
-              <p className="mt-2 text-[11px] text-ink-soft/70 leading-snug">{t.map.currentlyShowing}</p>
+              <p className="mt-2 text-[11px] text-ink-soft/70 leading-snug">
+                {geoLevel === "county"
+                  ? locale === "es"
+                    ? "Mostrando actualmente: agregado del Condado de Kane (104 secciones combinadas)."
+                    : locale === "pl"
+                      ? "Obecnie wyświetlane: agregat Hrabstwa Kane (104 obwody łącznie)."
+                      : "Currently showing: Kane County aggregate (104 tracts combined)."
+                  : geoLevel === "planning-area"
+                    ? locale === "es"
+                      ? "Mostrando actualmente: 5 Áreas de Planificación de KCHD (agregadas de 104 secciones)."
+                      : locale === "pl"
+                        ? "Obecnie wyświetlane: 5 Obszarów Planowania KCHD (agregowane z 104 obwodów)."
+                        : "Currently showing: 5 KCHD Planning Areas (aggregated from 104 tracts)."
+                    : geoLevel === "municipality"
+                      ? locale === "es"
+                        ? "Mostrando actualmente: municipios del Condado de Kane (agregados de 104 secciones)."
+                        : locale === "pl"
+                          ? "Obecnie wyświetlane: gminy Hrabstwa Kane (agregowane z 104 obwodów)."
+                          : "Currently showing: Kane County municipalities (aggregated from 104 tracts)."
+                      : geoLevel === "zip"
+                        ? locale === "es"
+                          ? "Mostrando actualmente: códigos postales del Condado de Kane (agregados de 104 secciones)."
+                          : locale === "pl"
+                            ? "Obecnie wyświetlane: kody pocztowe Hrabstwa Kane (agregowane z 104 obwodów)."
+                            : "Currently showing: Kane County ZIP codes (aggregated from 104 tracts)."
+                        : t.map.currentlyShowing}
+              </p>
             </div>
 
             <div className="pt-4 border-t border-rule">

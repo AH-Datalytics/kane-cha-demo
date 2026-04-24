@@ -45,7 +45,7 @@ export function SiteFooter() {
                 <li><Link href="/reports" className="text-ink hover:text-kane-blue-deep">{t.nav.reports}</Link></li>
                 <li><Link href="/sources" className="text-ink hover:text-kane-blue-deep">{t.nav.sources}</Link></li>
                 <li><Link href="/admin" className="text-ink hover:text-kane-blue-deep">KCHD staff</Link></li>
-                <li><a href="#" className="text-ink hover:text-kane-blue-deep">{t.footer.accessibility}</a></li>
+                <li><Link href="/accessibility" className="text-ink hover:text-kane-blue-deep">{t.footer.accessibility}</Link></li>
               </ul>
             </div>
           </nav>

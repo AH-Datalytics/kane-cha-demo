@@ -20,10 +20,20 @@ import { useLocale } from "@/lib/i18n";
 
 type StaffUser = (typeof MOCK_ADMIN_USERS)[number];
 
+type TabId = "analytics" | "data" | "upload" | "users";
+
+function canAccessTab(role: string, tab: TabId): boolean {
+  if (role === "Admin") return true;
+  if (role === "Uploader") return tab !== "users";
+  if (role === "Editor") return tab === "analytics" || tab === "data" || tab === "users";
+  if (role === "Viewer") return tab === "analytics" || tab === "users";
+  return false;
+}
+
 export default function AdminPage() {
   const { t, locale } = useLocale();
   const [signedIn, setSignedIn] = useState<StaffUser | null>(null);
-  const [tab, setTab] = useState<"analytics" | "data" | "upload" | "users">("analytics");
+  const [tab, setTab] = useState<TabId>("analytics");
   const [refreshing, setRefreshing] = useState<string | null>(null);
   const [refreshed, setRefreshed] = useState<Set<string>>(new Set());
   const [uploadScope, setUploadScope] = useState<string>("chronic-disease");
@@ -40,6 +50,8 @@ export default function AdminPage() {
   const handleSignIn = (user: StaffUser) => {
     setSignedIn(user);
     localStorage.setItem("kane-admin-user", user.id);
+    // Redirect to a tab the user can actually access
+    if (!canAccessTab(user.role, tab)) setTab("analytics");
   };
   const handleSignOut = () => {
     setSignedIn(null);
@@ -76,7 +88,7 @@ export default function AdminPage() {
                   {t.admin.directoryTitle}
                 </h2>
                 <div className="grid sm:grid-cols-2 gap-3">
-                  {MOCK_ADMIN_USERS.slice(0, 8).map((u) => (
+                  {pickBalancedRoles(MOCK_ADMIN_USERS).map((u) => (
                     <button
                       key={u.id}
                       onClick={() => handleSignIn(u)}
@@ -157,12 +169,12 @@ export default function AdminPage() {
         <div className="container mx-auto flex flex-wrap gap-0">
           {(
             [
-              { id: "analytics", label: t.admin.tabAnalytics, Icon: TrendingUp },
-              { id: "data", label: t.admin.tabData, Icon: RefreshCw },
-              { id: "upload", label: t.admin.tabUpload, Icon: Upload },
-              { id: "users", label: t.admin.tabUsers, Icon: Users },
-            ] as const
-          ).map(({ id, label, Icon }) => (
+              { id: "analytics" as TabId, label: t.admin.tabAnalytics, Icon: TrendingUp },
+              { id: "data" as TabId, label: t.admin.tabData, Icon: RefreshCw },
+              { id: "upload" as TabId, label: t.admin.tabUpload, Icon: Upload },
+              { id: "users" as TabId, label: t.admin.tabUsers, Icon: Users },
+            ]
+          ).filter((t) => canAccessTab(signedIn.role, t.id)).map(({ id, label, Icon }) => (
             <button
               key={id}
               onClick={() => setTab(id)}
@@ -177,10 +189,76 @@ export default function AdminPage() {
               {label}
             </button>
           ))}
+          {signedIn.role !== "Admin" && (
+            <div className="ml-auto flex items-center gap-2 px-4 py-4">
+              <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-soft/70">
+                {locale === "es"
+                  ? "Acceso"
+                  : locale === "pl"
+                    ? "Dostęp"
+                    : "Access"}
+              </span>
+              <RoleBadge role={signedIn.role} label={roleLabel(signedIn.role)} />
+              {(signedIn.role === "Viewer" || signedIn.role === "Editor") && (
+                <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-soft">
+                  ·{" "}
+                  {locale === "es"
+                    ? "solo lectura"
+                    : locale === "pl"
+                      ? "tylko do odczytu"
+                      : "read-only"}
+                </span>
+              )}
+            </div>
+          )}
         </div>
       </section>
 
       <div className="container mx-auto py-10">
+        {/* Role-aware notice */}
+        {signedIn.role === "Viewer" && (
+          <div className="mb-8 border-l-4 border-kane-blue-deep bg-white p-4 flex items-start gap-3">
+            <Shield size={18} className="text-kane-blue-deep shrink-0 mt-0.5" />
+            <div>
+              <Eyebrow>
+                {locale === "es"
+                  ? "Perfil Viewer · solo lectura"
+                  : locale === "pl"
+                    ? "Profil Viewer · tylko do odczytu"
+                    : "Viewer profile · read-only"}
+              </Eyebrow>
+              <p className="mt-1 text-sm text-ink-soft leading-relaxed">
+                {locale === "es"
+                  ? "Puede revisar la analítica de uso y el directorio de personal, pero no puede activar actualizaciones ni cargar datos. Contacte con un Administrador para cambios."
+                  : locale === "pl"
+                    ? "Możesz przeglądać analitykę użycia i katalog personelu, ale nie możesz uruchamiać odświeżeń ani przesyłać danych. Skontaktuj się z Administratorem w sprawie zmian."
+                    : "You can review usage analytics and the staff directory, but you cannot trigger data refreshes or upload. Contact an Admin for changes."}
+              </p>
+            </div>
+          </div>
+        )}
+        {signedIn.role === "Editor" && (
+          <div className="mb-8 border-l-4 border-kane-amber bg-white p-4 flex items-start gap-3">
+            <Shield size={18} className="text-kane-amber shrink-0 mt-0.5" />
+            <div>
+              <Eyebrow>
+                {locale === "es"
+                  ? "Perfil Editor · sin permisos de carga"
+                  : locale === "pl"
+                    ? "Profil Editor · bez uprawnień przesyłania"
+                    : "Editor profile · no upload rights"}
+              </Eyebrow>
+              <p className="mt-1 text-sm text-ink-soft leading-relaxed">
+                {locale === "es"
+                  ? "Puede gestionar fuentes de datos y editar contenido cualitativo, pero no cargar nuevos conjuntos de datos."
+                  : locale === "pl"
+                    ? "Możesz zarządzać źródłami danych i edytować treści jakościowe, ale nie możesz przesyłać nowych zbiorów danych."
+                    : "You can manage data sources and edit qualitative content, but not upload new datasets."}
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Analytics */}
         {tab === "analytics" && (
           <div>
@@ -339,7 +417,7 @@ export default function AdminPage() {
                         <td className="p-4">
                           <button
                             onClick={() => handleRefresh(s.id)}
-                            disabled={isRefreshing}
+                            disabled={isRefreshing || signedIn.role === "Viewer"}
                             className={cn(
                               "inline-flex items-center gap-1.5 border px-3 py-1.5 text-[11px] font-mono uppercase tracking-[0.14em] transition-colors",
                               isRefreshing
@@ -560,6 +638,17 @@ export default function AdminPage() {
       </div>
     </div>
   );
+}
+
+function pickBalancedRoles(users: readonly StaffUser[]) {
+  const buckets: Record<string, StaffUser[]> = { Admin: [], Uploader: [], Editor: [], Viewer: [] };
+  users.forEach((u) => buckets[u.role]?.push(u));
+  // 2 admins, 2 uploaders, 2 editors, 2 viewers (fall back to whatever exists)
+  const out: StaffUser[] = [];
+  ["Admin", "Uploader", "Editor", "Viewer"].forEach((role) => {
+    out.push(...(buckets[role] ?? []).slice(0, 2));
+  });
+  return out.slice(0, 8);
 }
 
 function RoleBadge({ role, label }: { role: string; label: string }) {

@@ -77,14 +77,14 @@ export function HomeHero() {
         <aside className="md:col-span-4 md:border-l md:border-rule md:pl-8 animate-fade-up" aria-label="Masthead">
           <div className="flex items-start justify-between">
             <Image
-              src="/logos/kane-county-seal.png"
+              src="/logos/kane-county-seal-transparent.png"
               alt="Kane County seal"
               width={88}
               height={88}
               className="h-20 w-20 object-contain"
             />
             <Image
-              src="/logos/kane-county-main.png"
+              src="/logos/kane-county-main-transparent.png"
               alt="Kane County, Illinois · Established January 16, 1836"
               width={200}
               height={50}

@@ -11,6 +11,8 @@ import {
   DEMO_LABELS,
   DemographicSlice,
   CHA_CYCLES,
+  GEO_BREAKDOWNS,
+  PLANNING_AREAS,
 } from "@/lib/data";
 import { DisparityBars } from "@/components/charts/disparity-bars";
 import { TrendChart } from "@/components/charts/trend-chart";
@@ -59,6 +61,18 @@ function ReportsPageInner() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Prune demographic slices when no selected indicator supports them
+  useEffect(() => {
+    const avail = new Set<DemographicSlice>();
+    indicators.forEach((id) => {
+      (EQUITY_BY_INDICATOR[id] ?? []).forEach((e) => avail.add(e.slice));
+    });
+    setDemo((prev) => {
+      const filtered = prev.filter((s) => avail.has(s));
+      return filtered.length === prev.length ? prev : filtered;
+    });
+  }, [indicators]);
 
   const buildShareUrl = () => {
     const payload = { title, indicators, geoMode, demo, period };
@@ -215,45 +229,69 @@ function ReportsPageInner() {
           <EditorialCard className="p-6">
             <Eyebrow>{t.reports.step3}</Eyebrow>
             <p className="mt-2 text-xs text-ink-soft">{t.reports.step3Body}</p>
-            <div className="mt-3 flex flex-wrap gap-1.5">
-              {(
-                [
-                  "overall",
-                  "race-white",
-                  "race-black",
-                  "race-latino",
-                  "race-asian",
-                  "income-low",
-                  "income-mid",
-                  "income-high",
-                  "lang-en",
-                  "lang-es",
-                  "lang-pl",
-                  "age-18-34",
-                  "age-35-54",
-                  "age-55-plus",
-                  "lgbtq",
-                ] as DemographicSlice[]
-              ).map((slice) => {
-                const on = demo.includes(slice);
-                return (
-                  <button
-                    key={slice}
-                    onClick={() =>
-                      setDemo((prev) => (on ? prev.filter((x) => x !== slice) : [...prev, slice]))
-                    }
-                    className={cn(
-                      "px-2 py-1 border text-[10px] transition-colors",
-                      on
-                        ? "bg-kane-amber border-kane-amber text-white"
-                        : "border-rule text-ink-soft hover:border-kane-amber"
-                    )}
-                  >
-                    {DEMO_LABELS[slice][locale]}
-                  </button>
-                );
-              })}
-            </div>
+            {(() => {
+              const availableSlices = new Set<DemographicSlice>();
+              indicators.forEach((id) => {
+                (EQUITY_BY_INDICATOR[id] ?? []).forEach((e) => availableSlices.add(e.slice));
+              });
+              return (
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {(
+                    [
+                      "overall",
+                      "race-white",
+                      "race-black",
+                      "race-latino",
+                      "race-asian",
+                      "income-low",
+                      "income-mid",
+                      "income-high",
+                      "lang-en",
+                      "lang-es",
+                      "lang-pl",
+                      "age-18-34",
+                      "age-35-54",
+                      "age-55-plus",
+                      "lgbtq",
+                    ] as DemographicSlice[]
+                  ).map((slice) => {
+                    const on = demo.includes(slice);
+                    const available = availableSlices.has(slice);
+                    return (
+                      <button
+                        key={slice}
+                        onClick={() => {
+                          if (!available) return;
+                          setDemo((prev) =>
+                            on ? prev.filter((x) => x !== slice) : [...prev, slice]
+                          );
+                        }}
+                        disabled={!available}
+                        title={
+                          !available
+                            ? locale === "es"
+                              ? "No disponible para los indicadores seleccionados"
+                              : locale === "pl"
+                                ? "Niedostępne dla wybranych wskaźników"
+                                : "Not available for the selected indicator(s)"
+                            : undefined
+                        }
+                        className={cn(
+                          "px-2 py-1 border text-[10px] transition-colors",
+                          !available
+                            ? "border-rule/50 text-ink-soft/30 line-through cursor-not-allowed bg-paper-deep/30"
+                            : on
+                              ? "bg-kane-amber border-kane-amber text-white"
+                              : "border-rule text-ink-soft hover:border-kane-amber"
+                        )}
+                      >
+                        {DEMO_LABELS[slice][locale]}
+                      </button>
+                    );
+                  })}
+                </div>
+              );
+            })()}
           </EditorialCard>
 
           <EditorialCard className="p-6">
@@ -357,6 +395,9 @@ function ReportsPageInner() {
                 locale === "es" ? meta?.labelEs : locale === "pl" ? meta?.labelPl : meta?.label;
               const trend = TREND_BY_INDICATOR[id] ?? [];
               const equity = (EQUITY_BY_INDICATOR[id] ?? []).filter((e) => demo.includes(e.slice));
+              const geo = GEO_BREAKDOWNS[id];
+              const unit = meta?.unit ?? "%";
+
               return (
                 <section
                   key={id}
@@ -374,7 +415,7 @@ function ReportsPageInner() {
                     <div className="text-right">
                       <div className="font-display tnum text-3xl text-kane-blue-ink">
                         {meta?.value}
-                        <span className="text-sm text-ink-soft">{meta?.unit}</span>
+                        <span className="text-sm text-ink-soft">{unit}</span>
                       </div>
                       <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-soft/70 mt-0.5">
                         {period}
@@ -387,16 +428,160 @@ function ReportsPageInner() {
                       <div className="mt-6">
                         <Eyebrow>{t.reports.trend}</Eyebrow>
                         <div className="mt-3">
-                          <TrendChart data={trend} unit={meta?.unit ?? "%"} height={220} />
+                          <TrendChart data={trend} unit={unit} height={220} />
                         </div>
                       </div>
                     )}
+
+                  {/* Geography view — driven by step 2 */}
+                  {geoMode === "municipality" && geo && (
+                    <div className="mt-6">
+                      <Eyebrow>
+                        {locale === "es"
+                          ? "Por municipio"
+                          : locale === "pl"
+                            ? "Według gminy"
+                            : "By municipality"}
+                      </Eyebrow>
+                      <table className="mt-3 w-full text-sm">
+                        <thead>
+                          <tr className="border-b border-rule font-mono text-[10px] uppercase tracking-[0.14em] text-ink-soft/70">
+                            <th className="text-left py-2">
+                              {locale === "es" ? "Municipio" : locale === "pl" ? "Gmina" : "Municipality"}
+                            </th>
+                            <th className="text-right py-2">
+                              {locale === "es" ? "Valor" : locale === "pl" ? "Wartość" : "Value"}
+                            </th>
+                            <th className="text-right py-2 w-1/2 pl-4">
+                              {locale === "es" ? "vs. condado" : locale === "pl" ? "vs. hrabstwo" : "vs. county"}
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {[...geo.municipalities]
+                            .sort((a, b) => b.value - a.value)
+                            .map((m) => {
+                              const county = meta?.value ?? 1;
+                              const pct = Math.min(100, (m.value / (county * 2)) * 100);
+                              const ratio = (m.value / county).toFixed(2);
+                              const above = m.value > county;
+                              return (
+                                <tr key={m.id} className="border-b border-rule">
+                                  <td className="py-2.5 font-display text-kane-blue-ink">{m.name}</td>
+                                  <td className="py-2.5 text-right font-display tnum">
+                                    {m.value}
+                                    <span className="text-xs text-ink-soft">{unit}</span>
+                                  </td>
+                                  <td className="py-2.5 pl-4">
+                                    <div className="flex items-center gap-3">
+                                      <div className="relative h-2 flex-1 bg-paper-deep">
+                                        <div
+                                          className={cn(
+                                            "absolute inset-y-0 left-0",
+                                            above ? "bg-kane-amber" : "bg-kane-blue-deep"
+                                          )}
+                                          style={{ width: `${pct}%` }}
+                                          aria-hidden
+                                        />
+                                      </div>
+                                      <span className="font-mono text-[10px] tnum text-ink-soft w-10 text-right">
+                                        {ratio}×
+                                      </span>
+                                    </div>
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+
+                  {geoMode === "planning" && geo && (
+                    <div className="mt-6">
+                      <Eyebrow>
+                        {locale === "es"
+                          ? "Por Área de Planificación KCHD"
+                          : locale === "pl"
+                            ? "Według Obszarów Planowania KCHD"
+                            : "By KCHD Planning Area"}
+                      </Eyebrow>
+                      <div className="mt-3 grid grid-cols-5 border-t border-l border-rule">
+                        {PLANNING_AREAS.map((pa) => {
+                          const value = geo.planningAreas[pa.id];
+                          return (
+                            <div key={pa.id} className="border-r border-b border-rule p-3 bg-paper/50">
+                              <div className="font-mono text-[9px] uppercase tracking-[0.12em] text-ink-soft/70">
+                                {pa.name}
+                              </div>
+                              <div className="mt-1.5 font-display tnum text-xl text-kane-blue-ink">
+                                {value}
+                                <span className="text-xs text-ink-soft">{unit}</span>
+                              </div>
+                              <div className="mt-1 font-mono text-[9px] text-ink-soft/60">
+                                {pa.tracts} tracts
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {geoMode === "tract" && geo && (
+                    <div className="mt-6 grid md:grid-cols-2 gap-6">
+                      <div>
+                        <Eyebrow>
+                          {locale === "es"
+                            ? "5 tractos más altos"
+                            : locale === "pl"
+                              ? "5 najwyższych obwodów"
+                              : "Top 5 tracts"}
+                        </Eyebrow>
+                        <table className="mt-3 w-full text-sm">
+                          <tbody>
+                            {geo.topTracts.map((tt) => (
+                              <tr key={tt.geoid} className="border-b border-rule">
+                                <td className="py-2 text-[13px] text-ink">{tt.name}</td>
+                                <td className="py-2 text-right font-display tnum text-kane-amber">
+                                  {tt.value}
+                                  <span className="text-[11px] text-ink-soft">{unit}</span>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <Eyebrow>
+                          {locale === "es"
+                            ? "5 tractos más bajos"
+                            : locale === "pl"
+                              ? "5 najniższych obwodów"
+                              : "Bottom 5 tracts"}
+                        </Eyebrow>
+                        <table className="mt-3 w-full text-sm">
+                          <tbody>
+                            {geo.bottomTracts.map((tt) => (
+                              <tr key={tt.geoid} className="border-b border-rule">
+                                <td className="py-2 text-[13px] text-ink">{tt.name}</td>
+                                <td className="py-2 text-right font-display tnum text-kane-blue-deep">
+                                  {tt.value}
+                                  <span className="text-[11px] text-ink-soft">{unit}</span>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
 
                   {equity.length > 0 && (
                     <div className="mt-6">
                       <Eyebrow>{t.reports.equityView}</Eyebrow>
                       <div className="mt-3">
-                        <DisparityBars data={equity} unit={meta?.unit ?? "%"} />
+                        <DisparityBars data={equity} unit={unit} />
                       </div>
                     </div>
                   )}

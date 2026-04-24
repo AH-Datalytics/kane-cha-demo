@@ -730,6 +730,235 @@ export const PA_HEALTH_PROFILE: Record<
   "pa-central": { diabetes: 8.9, obesity: 28.7, uninsured: 8.1, mentalDistress: 21.2, infantMortality: 4.4, svi: 0.34 },
 };
 
+/* ---------- Geographic breakdowns by indicator (illustrative) ---------- */
+
+export const GEO_BREAKDOWNS: Record<
+  string,
+  {
+    planningAreas: Record<string, number>;
+    municipalities: { id: string; name: string; value: number }[];
+    topTracts: { geoid: string; name: string; value: number }[];
+    bottomTracts: { geoid: string; name: string; value: number }[];
+  }
+> = {
+  diabetes: {
+    planningAreas: { "pa-east": 12.6, "pa-north": 11.1, "pa-south": 8.2, "pa-west": 7.6, "pa-central": 8.9 },
+    municipalities: [
+      { id: "aurora", name: "Aurora", value: 13.4 },
+      { id: "carpentersville", name: "Carpentersville", value: 12.1 },
+      { id: "elgin", name: "Elgin", value: 11.0 },
+      { id: "south-elgin", name: "South Elgin", value: 9.8 },
+      { id: "batavia", name: "Batavia", value: 8.6 },
+      { id: "st-charles", name: "St. Charles", value: 7.9 },
+      { id: "geneva", name: "Geneva", value: 7.6 },
+      { id: "west-dundee", name: "West Dundee", value: 8.8 },
+    ],
+    topTracts: [
+      { geoid: "17089851900", name: "Tract 8519 · Aurora east", value: 16.8 },
+      { geoid: "17089852700", name: "Tract 8527 · Aurora", value: 16.1 },
+      { geoid: "17089851400", name: "Tract 8514 · Aurora", value: 15.7 },
+      { geoid: "17089850300", name: "Tract 8503 · Elgin central", value: 15.2 },
+      { geoid: "17089850400", name: "Tract 8504 · Elgin north", value: 14.6 },
+    ],
+    bottomTracts: [
+      { geoid: "17089854600", name: "Tract 8546 · Geneva", value: 6.2 },
+      { geoid: "17089854400", name: "Tract 8544 · St. Charles", value: 6.4 },
+      { geoid: "17089854700", name: "Tract 8547 · Batavia", value: 6.8 },
+      { geoid: "17089853900", name: "Tract 8539 · Campton Hills", value: 7.1 },
+      { geoid: "17089854800", name: "Tract 8548 · Geneva south", value: 7.3 },
+    ],
+  },
+  obesity: {
+    planningAreas: { "pa-east": 34.1, "pa-north": 33.2, "pa-south": 27.6, "pa-west": 25.9, "pa-central": 28.7 },
+    municipalities: [
+      { id: "aurora", name: "Aurora", value: 36.8 },
+      { id: "carpentersville", name: "Carpentersville", value: 35.2 },
+      { id: "elgin", name: "Elgin", value: 33.7 },
+      { id: "south-elgin", name: "South Elgin", value: 31.4 },
+      { id: "batavia", name: "Batavia", value: 28.1 },
+      { id: "st-charles", name: "St. Charles", value: 26.5 },
+      { id: "geneva", name: "Geneva", value: 25.8 },
+      { id: "west-dundee", name: "West Dundee", value: 29.6 },
+    ],
+    topTracts: [
+      { geoid: "17089852700", name: "Tract 8527 · Aurora", value: 41.2 },
+      { geoid: "17089851900", name: "Tract 8519 · Aurora east", value: 40.4 },
+      { geoid: "17089851400", name: "Tract 8514 · Aurora", value: 39.7 },
+      { geoid: "17089850400", name: "Tract 8504 · Elgin north", value: 38.9 },
+      { geoid: "17089850300", name: "Tract 8503 · Elgin central", value: 38.1 },
+    ],
+    bottomTracts: [
+      { geoid: "17089854600", name: "Tract 8546 · Geneva", value: 22.3 },
+      { geoid: "17089854400", name: "Tract 8544 · St. Charles", value: 23.1 },
+      { geoid: "17089854800", name: "Tract 8548 · Geneva south", value: 24.0 },
+      { geoid: "17089854700", name: "Tract 8547 · Batavia", value: 24.6 },
+      { geoid: "17089853900", name: "Tract 8539 · Campton Hills", value: 25.2 },
+    ],
+  },
+  hypertension: {
+    planningAreas: { "pa-east": 31.4, "pa-north": 30.8, "pa-south": 27.2, "pa-west": 26.1, "pa-central": 28.6 },
+    municipalities: [
+      { id: "aurora", name: "Aurora", value: 32.8 },
+      { id: "carpentersville", name: "Carpentersville", value: 31.6 },
+      { id: "elgin", name: "Elgin", value: 30.2 },
+      { id: "south-elgin", name: "South Elgin", value: 28.9 },
+      { id: "batavia", name: "Batavia", value: 27.4 },
+      { id: "st-charles", name: "St. Charles", value: 26.8 },
+      { id: "geneva", name: "Geneva", value: 26.2 },
+      { id: "west-dundee", name: "West Dundee", value: 27.9 },
+    ],
+    topTracts: [
+      { geoid: "17089851400", name: "Tract 8514 · Aurora", value: 37.1 },
+      { geoid: "17089851900", name: "Tract 8519 · Aurora east", value: 36.4 },
+      { geoid: "17089852700", name: "Tract 8527 · Aurora", value: 35.8 },
+      { geoid: "17089850300", name: "Tract 8503 · Elgin central", value: 34.6 },
+      { geoid: "17089850400", name: "Tract 8504 · Elgin north", value: 33.9 },
+    ],
+    bottomTracts: [
+      { geoid: "17089854600", name: "Tract 8546 · Geneva", value: 22.4 },
+      { geoid: "17089854400", name: "Tract 8544 · St. Charles", value: 23.1 },
+      { geoid: "17089853900", name: "Tract 8539 · Campton Hills", value: 23.8 },
+      { geoid: "17089854700", name: "Tract 8547 · Batavia", value: 24.5 },
+      { geoid: "17089854800", name: "Tract 8548 · Geneva south", value: 24.9 },
+    ],
+  },
+  "mental-distress": {
+    planningAreas: { "pa-east": 25.6, "pa-north": 24.9, "pa-south": 20.8, "pa-west": 19.4, "pa-central": 21.2 },
+    municipalities: [
+      { id: "aurora", name: "Aurora", value: 26.4 },
+      { id: "elgin", name: "Elgin", value: 25.8 },
+      { id: "carpentersville", name: "Carpentersville", value: 25.2 },
+      { id: "south-elgin", name: "South Elgin", value: 23.1 },
+      { id: "batavia", name: "Batavia", value: 21.6 },
+      { id: "st-charles", name: "St. Charles", value: 20.4 },
+      { id: "geneva", name: "Geneva", value: 19.9 },
+      { id: "west-dundee", name: "West Dundee", value: 22.3 },
+    ],
+    topTracts: [
+      { geoid: "17089850300", name: "Tract 8503 · Elgin central", value: 29.8 },
+      { geoid: "17089850400", name: "Tract 8504 · Elgin north", value: 29.1 },
+      { geoid: "17089851900", name: "Tract 8519 · Aurora east", value: 28.4 },
+      { geoid: "17089852700", name: "Tract 8527 · Aurora", value: 27.9 },
+      { geoid: "17089852200", name: "Tract 8522 · Aurora", value: 27.2 },
+    ],
+    bottomTracts: [
+      { geoid: "17089854600", name: "Tract 8546 · Geneva", value: 16.8 },
+      { geoid: "17089854800", name: "Tract 8548 · Geneva south", value: 17.4 },
+      { geoid: "17089854400", name: "Tract 8544 · St. Charles", value: 17.9 },
+      { geoid: "17089854700", name: "Tract 8547 · Batavia", value: 18.3 },
+      { geoid: "17089853900", name: "Tract 8539 · Campton Hills", value: 18.8 },
+    ],
+  },
+  "no-primary-care": {
+    planningAreas: { "pa-east": 14.8, "pa-north": 14.2, "pa-south": 9.1, "pa-west": 8.6, "pa-central": 10.2 },
+    municipalities: [
+      { id: "aurora", name: "Aurora", value: 18.2 },
+      { id: "carpentersville", name: "Carpentersville", value: 16.4 },
+      { id: "elgin", name: "Elgin", value: 14.6 },
+      { id: "south-elgin", name: "South Elgin", value: 11.8 },
+      { id: "batavia", name: "Batavia", value: 9.1 },
+      { id: "st-charles", name: "St. Charles", value: 8.4 },
+      { id: "geneva", name: "Geneva", value: 7.9 },
+      { id: "west-dundee", name: "West Dundee", value: 10.2 },
+    ],
+    topTracts: [
+      { geoid: "17089852700", name: "Tract 8527 · Aurora", value: 24.6 },
+      { geoid: "17089851900", name: "Tract 8519 · Aurora east", value: 23.8 },
+      { geoid: "17089851400", name: "Tract 8514 · Aurora", value: 22.4 },
+      { geoid: "17089850300", name: "Tract 8503 · Elgin central", value: 21.2 },
+      { geoid: "17089850400", name: "Tract 8504 · Elgin north", value: 20.6 },
+    ],
+    bottomTracts: [
+      { geoid: "17089854600", name: "Tract 8546 · Geneva", value: 6.8 },
+      { geoid: "17089854400", name: "Tract 8544 · St. Charles", value: 7.2 },
+      { geoid: "17089854800", name: "Tract 8548 · Geneva south", value: 7.6 },
+      { geoid: "17089854700", name: "Tract 8547 · Batavia", value: 8.1 },
+      { geoid: "17089853900", name: "Tract 8539 · Campton Hills", value: 8.4 },
+    ],
+  },
+  uninsured: {
+    planningAreas: { "pa-east": 13.4, "pa-north": 12.2, "pa-south": 7.1, "pa-west": 6.8, "pa-central": 8.1 },
+    municipalities: [
+      { id: "aurora", name: "Aurora", value: 15.1 },
+      { id: "carpentersville", name: "Carpentersville", value: 14.2 },
+      { id: "elgin", name: "Elgin", value: 12.6 },
+      { id: "south-elgin", name: "South Elgin", value: 9.4 },
+      { id: "batavia", name: "Batavia", value: 6.8 },
+      { id: "st-charles", name: "St. Charles", value: 6.1 },
+      { id: "geneva", name: "Geneva", value: 5.8 },
+      { id: "west-dundee", name: "West Dundee", value: 8.2 },
+    ],
+    topTracts: [
+      { geoid: "17089851900", name: "Tract 8519 · Aurora east", value: 21.4 },
+      { geoid: "17089852700", name: "Tract 8527 · Aurora", value: 20.8 },
+      { geoid: "17089851400", name: "Tract 8514 · Aurora", value: 19.6 },
+      { geoid: "17089850300", name: "Tract 8503 · Elgin central", value: 18.4 },
+      { geoid: "17089850400", name: "Tract 8504 · Elgin north", value: 17.8 },
+    ],
+    bottomTracts: [
+      { geoid: "17089854600", name: "Tract 8546 · Geneva", value: 3.1 },
+      { geoid: "17089854400", name: "Tract 8544 · St. Charles", value: 3.6 },
+      { geoid: "17089854800", name: "Tract 8548 · Geneva south", value: 4.0 },
+      { geoid: "17089854700", name: "Tract 8547 · Batavia", value: 4.4 },
+      { geoid: "17089853900", name: "Tract 8539 · Campton Hills", value: 4.8 },
+    ],
+  },
+  "infant-mortality": {
+    planningAreas: { "pa-east": 6.4, "pa-north": 5.8, "pa-south": 4.1, "pa-west": 3.6, "pa-central": 4.4 },
+    municipalities: [
+      { id: "aurora", name: "Aurora", value: 6.8 },
+      { id: "carpentersville", name: "Carpentersville", value: 6.2 },
+      { id: "elgin", name: "Elgin", value: 5.9 },
+      { id: "south-elgin", name: "South Elgin", value: 4.8 },
+      { id: "batavia", name: "Batavia", value: 3.6 },
+      { id: "st-charles", name: "St. Charles", value: 3.2 },
+      { id: "geneva", name: "Geneva", value: 3.0 },
+      { id: "west-dundee", name: "West Dundee", value: 4.1 },
+    ],
+    topTracts: [
+      { geoid: "17089852200", name: "Tract 8522 · Aurora", value: 10.8 },
+      { geoid: "17089851900", name: "Tract 8519 · Aurora east", value: 9.6 },
+      { geoid: "17089852700", name: "Tract 8527 · Aurora", value: 9.1 },
+      { geoid: "17089850300", name: "Tract 8503 · Elgin central", value: 8.4 },
+      { geoid: "17089850400", name: "Tract 8504 · Elgin north", value: 7.8 },
+    ],
+    bottomTracts: [
+      { geoid: "17089854600", name: "Tract 8546 · Geneva", value: 2.8 },
+      { geoid: "17089854400", name: "Tract 8544 · St. Charles", value: 3.1 },
+      { geoid: "17089854800", name: "Tract 8548 · Geneva south", value: 3.4 },
+      { geoid: "17089854700", name: "Tract 8547 · Batavia", value: 3.6 },
+      { geoid: "17089853900", name: "Tract 8539 · Campton Hills", value: 3.9 },
+    ],
+  },
+  overdose: {
+    planningAreas: { "pa-east": 28.4, "pa-north": 27.6, "pa-south": 21.4, "pa-west": 19.8, "pa-central": 22.1 },
+    municipalities: [
+      { id: "aurora", name: "Aurora", value: 29.1 },
+      { id: "carpentersville", name: "Carpentersville", value: 28.4 },
+      { id: "elgin", name: "Elgin", value: 27.9 },
+      { id: "south-elgin", name: "South Elgin", value: 24.6 },
+      { id: "batavia", name: "Batavia", value: 21.4 },
+      { id: "st-charles", name: "St. Charles", value: 20.1 },
+      { id: "geneva", name: "Geneva", value: 19.3 },
+      { id: "west-dundee", name: "West Dundee", value: 23.2 },
+    ],
+    topTracts: [
+      { geoid: "17089850400", name: "Tract 8504 · Elgin north", value: 33.1 },
+      { geoid: "17089850300", name: "Tract 8503 · Elgin central", value: 32.6 },
+      { geoid: "17089851900", name: "Tract 8519 · Aurora east", value: 31.8 },
+      { geoid: "17089852700", name: "Tract 8527 · Aurora", value: 31.2 },
+      { geoid: "17089851400", name: "Tract 8514 · Aurora", value: 30.4 },
+    ],
+    bottomTracts: [
+      { geoid: "17089854600", name: "Tract 8546 · Geneva", value: 14.8 },
+      { geoid: "17089854400", name: "Tract 8544 · St. Charles", value: 15.4 },
+      { geoid: "17089854800", name: "Tract 8548 · Geneva south", value: 16.1 },
+      { geoid: "17089854700", name: "Tract 8547 · Batavia", value: 16.8 },
+      { geoid: "17089853900", name: "Tract 8539 · Campton Hills", value: 17.6 },
+    ],
+  },
+};
+
 /* ---------- Data sources ---------- */
 
 export const DATA_SOURCES = [

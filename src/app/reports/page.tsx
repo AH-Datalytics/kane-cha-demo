@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { PageHeader, Eyebrow, EditorialCard, RuleEditorial, Tag } from "@/components/ui/editorial";
+import { PageHeader, Eyebrow, EditorialCard, Tag } from "@/components/ui/editorial";
 import { cn } from "@/lib/utils";
 import {
   HEADLINE_INDICATORS,
@@ -11,12 +11,11 @@ import {
   DEMO_LABELS,
   DemographicSlice,
   CHA_CYCLES,
-  MUNICIPALITIES,
-  PLANNING_AREAS,
 } from "@/lib/data";
 import { DisparityBars } from "@/components/charts/disparity-bars";
 import { TrendChart } from "@/components/charts/trend-chart";
-import { FileDown, Link2, Printer, ImageDown, Share2 } from "lucide-react";
+import { FileDown, Link2, Printer, ImageDown } from "lucide-react";
+import { useLocale } from "@/lib/i18n";
 
 type GeoMode = "county" | "municipality" | "planning" | "tract";
 
@@ -29,18 +28,23 @@ export default function ReportsPage() {
 }
 
 function ReportsPageInner() {
+  const { t, locale } = useLocale();
   const params = useSearchParams();
-  const [title, setTitle] = useState("Kane County Custom Report");
+  const [title, setTitle] = useState(t.reports.defaultTitle);
   const [indicators, setIndicators] = useState<string[]>(
     params.get("indicator") ? [params.get("indicator")!] : ["diabetes", "mental-distress"]
   );
   const [geoMode, setGeoMode] = useState<GeoMode>("county");
-  const [demo, setDemo] = useState<DemographicSlice[]>(["overall", "race-white", "race-black", "race-latino"]);
+  const [demo, setDemo] = useState<DemographicSlice[]>([
+    "overall",
+    "race-white",
+    "race-black",
+    "race-latino",
+  ]);
   const [period, setPeriod] = useState<string>("2024 CHA");
   const [copied, setCopied] = useState(false);
   const previewRef = useRef<HTMLDivElement>(null);
 
-  // Parse state from URL on mount (shareable URL feature)
   useEffect(() => {
     const s = params.get("state");
     if (s) {
@@ -59,39 +63,45 @@ function ReportsPageInner() {
   const buildShareUrl = () => {
     const payload = { title, indicators, geoMode, demo, period };
     const encoded = btoa(encodeURIComponent(JSON.stringify(payload)));
-    const url = `${window.location.origin}${window.location.pathname}?state=${encoded}`;
-    return url;
+    return `${window.location.origin}${window.location.pathname}?state=${encoded}`;
   };
 
   const handleCopyLink = async () => {
-    const url = buildShareUrl();
-    await navigator.clipboard.writeText(url);
+    await navigator.clipboard.writeText(buildShareUrl());
     setCopied(true);
     setTimeout(() => setCopied(false), 1800);
   };
 
-  const handlePDF = () => {
-    window.print();
-  };
+  const handlePDF = () => window.print();
 
   const handleCSV = () => {
-    const rows: string[][] = [["Kane County Community Health Atlas — Custom Report"], [title], [`Generated ${new Date().toLocaleString()}`], [""]];
+    const rows: string[][] = [
+      ["Kane County Community Health Atlas — Custom Report"],
+      [title],
+      [`Generated ${new Date().toLocaleString()}`],
+      [""],
+    ];
     indicators.forEach((id) => {
       const meta = HEADLINE_INDICATORS.find((i) => i.id === id);
+      const mLabel =
+        locale === "es" ? meta?.labelEs : locale === "pl" ? meta?.labelPl : meta?.label;
       const equityRows = (EQUITY_BY_INDICATOR[id] ?? []).filter((e) => demo.includes(e.slice));
-      rows.push([`INDICATOR: ${meta?.label ?? id}`, `Unit: ${meta?.unit ?? "%"}`, `Source: ${meta?.source ?? ""}`]);
+      rows.push([
+        `INDICATOR: ${mLabel ?? id}`,
+        `Unit: ${meta?.unit ?? "%"}`,
+        `Source: ${meta?.source ?? ""}`,
+      ]);
       rows.push(["Slice", "Value", "Unit"]);
-      equityRows.forEach((e) => rows.push([DEMO_LABELS[e.slice].en, String(e.value), meta?.unit ?? "%"]));
+      equityRows.forEach((e) => rows.push([DEMO_LABELS[e.slice][locale], String(e.value), meta?.unit ?? "%"]));
       const trend = TREND_BY_INDICATOR[id] ?? [];
       if (trend.length) {
         rows.push([""]);
-        rows.push(["Trend across CHA cycles"]);
-        rows.push(["Cycle", "Value"]);
-        trend.forEach((t) => rows.push([t.cycle, String(t.value)]));
+        rows.push([t.reports.trend]);
+        rows.push([t.reports.period, "Value"]);
+        trend.forEach((tr) => rows.push([tr.cycle, String(tr.value)]));
       }
       rows.push([""]);
     });
-
     const csv = rows.map((r) => r.map((c) => `"${c.replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
     const url = URL.createObjectURL(blob);
@@ -116,27 +126,34 @@ function ReportsPageInner() {
     a.click();
   };
 
+  const geoOpts: { id: GeoMode; label: string }[] = [
+    { id: "county", label: t.reports.step2Opts.county },
+    { id: "municipality", label: t.reports.step2Opts.municipality },
+    { id: "planning", label: t.reports.step2Opts.planning },
+    { id: "tract", label: t.reports.step2Opts.tract },
+  ];
+
   return (
     <div>
       <PageHeader
-        eyebrow="Section 05 · Custom reports"
-        title="Build a report. Save it. Share it."
-        lede="Pick indicators, geography, demographics, and time period. Export to PDF, CSV, or PNG. Every report has a shareable URL that restores the exact view."
+        eyebrow={t.reports.eyebrow}
+        title={t.reports.title}
+        lede={t.reports.lede}
         meta={
           <div className="flex flex-wrap items-center gap-2">
-            <Tag>PDF export</Tag>
-            <Tag>CSV download</Tag>
-            <Tag>PNG image</Tag>
-            <Tag>Shareable URL</Tag>
+            <Tag>{t.reports.tags.pdf}</Tag>
+            <Tag>{t.reports.tags.csv}</Tag>
+            <Tag>{t.reports.tags.png}</Tag>
+            <Tag>{t.reports.tags.url}</Tag>
           </div>
         }
       />
 
-      <div className="container mx-auto py-10 grid lg:grid-cols-12 gap-8 no-print">
+      <div className="container mx-auto py-10 grid lg:grid-cols-12 gap-8">
         {/* Controls */}
-        <aside className="lg:col-span-4 space-y-6">
+        <aside className="lg:col-span-4 space-y-6 no-print">
           <EditorialCard className="p-6">
-            <Eyebrow>Report title</Eyebrow>
+            <Eyebrow>{t.reports.reportTitle}</Eyebrow>
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -145,24 +162,26 @@ function ReportsPageInner() {
           </EditorialCard>
 
           <EditorialCard className="p-6">
-            <Eyebrow>1. Indicators</Eyebrow>
-            <p className="mt-2 text-xs text-ink-soft">Pick one or more. Each becomes a section of the report.</p>
+            <Eyebrow>{t.reports.step1}</Eyebrow>
+            <p className="mt-2 text-xs text-ink-soft">{t.reports.step1Body}</p>
             <div className="mt-4 grid gap-2">
               {HEADLINE_INDICATORS.map((ind) => {
                 const on = indicators.includes(ind.id);
+                const label =
+                  locale === "es" ? ind.labelEs : locale === "pl" ? ind.labelPl : ind.label;
                 return (
                   <label key={ind.id} className="flex items-center gap-3 cursor-pointer group">
                     <input
                       type="checkbox"
                       checked={on}
-                      onChange={(e) => {
+                      onChange={(e) =>
                         setIndicators((prev) =>
                           e.target.checked ? [...prev, ind.id] : prev.filter((x) => x !== ind.id)
-                        );
-                      }}
+                        )
+                      }
                       className="accent-kane-blue-ink"
                     />
-                    <span className="text-sm text-ink group-hover:text-kane-blue-ink">{ind.label}</span>
+                    <span className="text-sm text-ink group-hover:text-kane-blue-ink">{label}</span>
                     <span className="ml-auto font-mono tnum text-xs text-ink-soft">
                       {ind.value}
                       {ind.unit}
@@ -174,16 +193,9 @@ function ReportsPageInner() {
           </EditorialCard>
 
           <EditorialCard className="p-6">
-            <Eyebrow>2. Geography</Eyebrow>
+            <Eyebrow>{t.reports.step2}</Eyebrow>
             <div className="mt-3 grid grid-cols-2 gap-1.5">
-              {(
-                [
-                  { id: "county", label: "Kane County" },
-                  { id: "municipality", label: "By municipality" },
-                  { id: "planning", label: "Planning Areas" },
-                  { id: "tract", label: "Census tracts" },
-                ] as { id: GeoMode; label: string }[]
-              ).map((g) => (
+              {geoOpts.map((g) => (
                 <button
                   key={g.id}
                   onClick={() => setGeoMode(g.id)}
@@ -201,19 +213,35 @@ function ReportsPageInner() {
           </EditorialCard>
 
           <EditorialCard className="p-6">
-            <Eyebrow>3. Demographics</Eyebrow>
-            <p className="mt-2 text-xs text-ink-soft">Slices to include in each indicator section.</p>
+            <Eyebrow>{t.reports.step3}</Eyebrow>
+            <p className="mt-2 text-xs text-ink-soft">{t.reports.step3Body}</p>
             <div className="mt-3 flex flex-wrap gap-1.5">
-              {(["overall", "race-white", "race-black", "race-latino", "race-asian", "income-low", "income-mid", "income-high", "lang-en", "lang-es", "lang-pl", "age-18-34", "age-35-54", "age-55-plus", "lgbtq"] as DemographicSlice[]).map((slice) => {
+              {(
+                [
+                  "overall",
+                  "race-white",
+                  "race-black",
+                  "race-latino",
+                  "race-asian",
+                  "income-low",
+                  "income-mid",
+                  "income-high",
+                  "lang-en",
+                  "lang-es",
+                  "lang-pl",
+                  "age-18-34",
+                  "age-35-54",
+                  "age-55-plus",
+                  "lgbtq",
+                ] as DemographicSlice[]
+              ).map((slice) => {
                 const on = demo.includes(slice);
                 return (
                   <button
                     key={slice}
-                    onClick={() => {
-                      setDemo((prev) =>
-                        on ? prev.filter((x) => x !== slice) : [...prev, slice]
-                      );
-                    }}
+                    onClick={() =>
+                      setDemo((prev) => (on ? prev.filter((x) => x !== slice) : [...prev, slice]))
+                    }
                     className={cn(
                       "px-2 py-1 border text-[10px] transition-colors",
                       on
@@ -221,7 +249,7 @@ function ReportsPageInner() {
                         : "border-rule text-ink-soft hover:border-kane-amber"
                     )}
                   >
-                    {DEMO_LABELS[slice].en}
+                    {DEMO_LABELS[slice][locale]}
                   </button>
                 );
               })}
@@ -229,9 +257,9 @@ function ReportsPageInner() {
           </EditorialCard>
 
           <EditorialCard className="p-6">
-            <Eyebrow>4. Time period</Eyebrow>
+            <Eyebrow>{t.reports.step4}</Eyebrow>
             <div className="mt-3 grid grid-cols-2 gap-1.5">
-              {[...CHA_CYCLES, "All cycles"].map((p) => (
+              {[...CHA_CYCLES, t.reports.allCycles].map((p) => (
                 <button
                   key={p}
                   onClick={() => setPeriod(p)}
@@ -249,7 +277,7 @@ function ReportsPageInner() {
           </EditorialCard>
 
           <EditorialCard className="p-6">
-            <Eyebrow>Export</Eyebrow>
+            <Eyebrow>{t.reports.exportHeading}</Eyebrow>
             <div className="mt-4 grid grid-cols-2 gap-2">
               <button
                 onClick={handlePDF}
@@ -273,70 +301,74 @@ function ReportsPageInner() {
                 onClick={handleCopyLink}
                 className="flex items-center gap-2 px-3 py-2 border border-kane-amber text-kane-amber text-xs hover:bg-kane-amber hover:text-white transition-colors"
               >
-                <Link2 size={14} /> {copied ? "Copied" : "Copy URL"}
+                <Link2 size={14} /> {copied ? t.reports.copiedLabel : t.reports.copyUrl}
               </button>
             </div>
-            <p className="mt-3 text-[11px] text-ink-soft/70 leading-snug">
-              Copy URL encodes the full report state so a colleague opens the exact same view.
-            </p>
+            <p className="mt-3 text-[11px] text-ink-soft/70 leading-snug">{t.reports.exportBody}</p>
           </EditorialCard>
         </aside>
 
         {/* Preview */}
         <main className="lg:col-span-8">
           <div ref={previewRef} className="report-print bg-white border border-rule p-8 md:p-12">
-            {/* Report masthead */}
             <div className="pb-6 mb-8 border-b border-rule">
               <div className="ribbon-kane h-1 w-full mb-6" aria-hidden />
-              <Eyebrow>Kane County Community Health Atlas · Custom report</Eyebrow>
+              <Eyebrow>Kane County Community Health Atlas · {t.reports.reportTitle}</Eyebrow>
               <h1 className="mt-2 font-display text-4xl md:text-5xl text-kane-blue-ink leading-tight">
                 {title}
               </h1>
               <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-6 text-xs">
                 <div>
                   <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-soft/70">
-                    Indicators
+                    {t.reports.indicators}
                   </div>
-                  <div className="mt-1 font-display tnum text-xl text-kane-blue-ink">{indicators.length}</div>
+                  <div className="mt-1 font-display tnum text-xl text-kane-blue-ink">
+                    {indicators.length}
+                  </div>
                 </div>
                 <div>
                   <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-soft/70">
-                    Geography
+                    {t.reports.geography}
                   </div>
                   <div className="mt-1 font-display text-sm text-kane-blue-ink">
-                    {geoMode === "county" && "Kane County"}
-                    {geoMode === "municipality" && "By municipality"}
-                    {geoMode === "planning" && "Planning Areas"}
-                    {geoMode === "tract" && "Census tracts"}
+                    {geoOpts.find((g) => g.id === geoMode)?.label}
                   </div>
                 </div>
                 <div>
                   <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-soft/70">
-                    Slices
+                    {t.reports.slices}
                   </div>
-                  <div className="mt-1 font-display tnum text-xl text-kane-blue-ink">{demo.length}</div>
+                  <div className="mt-1 font-display tnum text-xl text-kane-blue-ink">
+                    {demo.length}
+                  </div>
                 </div>
                 <div>
                   <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-soft/70">
-                    Period
+                    {t.reports.period}
                   </div>
                   <div className="mt-1 font-display text-sm text-kane-blue-ink">{period}</div>
                 </div>
               </div>
             </div>
 
-            {/* Indicator sections */}
             {indicators.map((id, i) => {
               const meta = HEADLINE_INDICATORS.find((x) => x.id === id);
+              const mLabel =
+                locale === "es" ? meta?.labelEs : locale === "pl" ? meta?.labelPl : meta?.label;
               const trend = TREND_BY_INDICATOR[id] ?? [];
               const equity = (EQUITY_BY_INDICATOR[id] ?? []).filter((e) => demo.includes(e.slice));
               return (
-                <section key={id} className={cn("mb-10 pb-10", i < indicators.length - 1 && "border-b border-rule")}>
+                <section
+                  key={id}
+                  className={cn("mb-10 pb-10", i < indicators.length - 1 && "border-b border-rule")}
+                >
                   <div className="flex items-baseline justify-between gap-4 mb-4">
                     <div>
-                      <Eyebrow>Section {String(i + 1).padStart(2, "0")}</Eyebrow>
+                      <Eyebrow>
+                        {t.reports.section} {String(i + 1).padStart(2, "0")}
+                      </Eyebrow>
                       <h2 className="mt-1 font-display text-2xl text-kane-blue-ink leading-tight">
-                        {meta?.label}
+                        {mLabel}
                       </h2>
                     </div>
                     <div className="text-right">
@@ -345,23 +377,24 @@ function ReportsPageInner() {
                         <span className="text-sm text-ink-soft">{meta?.unit}</span>
                       </div>
                       <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-soft/70 mt-0.5">
-                        Kane County · {period}
+                        {period}
                       </div>
                     </div>
                   </div>
 
-                  {trend.length > 0 && (period === "All cycles" || CHA_CYCLES.includes(period as any)) && (
-                    <div className="mt-6">
-                      <Eyebrow>Trend</Eyebrow>
-                      <div className="mt-3">
-                        <TrendChart data={trend} unit={meta?.unit ?? "%"} height={220} />
+                  {trend.length > 0 &&
+                    (period === t.reports.allCycles || CHA_CYCLES.includes(period as any)) && (
+                      <div className="mt-6">
+                        <Eyebrow>{t.reports.trend}</Eyebrow>
+                        <div className="mt-3">
+                          <TrendChart data={trend} unit={meta?.unit ?? "%"} height={220} />
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
                   {equity.length > 0 && (
                     <div className="mt-6">
-                      <Eyebrow>Equity view</Eyebrow>
+                      <Eyebrow>{t.reports.equityView}</Eyebrow>
                       <div className="mt-3">
                         <DisparityBars data={equity} unit={meta?.unit ?? "%"} />
                       </div>
@@ -377,16 +410,16 @@ function ReportsPageInner() {
 
             {indicators.length === 0 && (
               <div className="py-16 text-center">
-                <Eyebrow>No indicators selected</Eyebrow>
+                <Eyebrow>{t.reports.noIndicators}</Eyebrow>
                 <p className="mt-3 font-display text-2xl text-ink-soft">
-                  Pick one or more indicators from the left panel.
+                  {t.reports.noIndicatorsBody}
                 </p>
               </div>
             )}
 
             <div className="pt-6 mt-6 border-t border-rule flex items-center justify-between text-[11px] text-ink-soft/70">
               <span className="font-mono uppercase tracking-[0.14em]">
-                Generated {new Date().toLocaleDateString()} · Kane County Health Department
+                {t.reports.generatedOn(new Date().toLocaleDateString())}
               </span>
               <span className="font-mono">CHA 2024 · v1.0</span>
             </div>

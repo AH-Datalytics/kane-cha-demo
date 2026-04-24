@@ -13,62 +13,94 @@ import {
   DATA_SOURCES,
 } from "@/lib/data";
 import { Search as SearchIcon } from "lucide-react";
+import { useLocale, Locale } from "@/lib/i18n";
 
-function buildIndex() {
-  const entries: { title: string; category: string; href: string; body: string; group: string }[] = [];
+type Entry = {
+  title: string;
+  categoryKey: keyof ReturnType<typeof getGroupLabels>;
+  href: string;
+  body: string;
+  groupKey: keyof ReturnType<typeof getGroupLabels>;
+};
+
+function getGroupLabels(
+  t: ReturnType<typeof useLocale>["t"]
+): {
+  indicators: string;
+  places: string;
+  priorityAreas: string;
+  framework: string;
+  sources: string;
+  indicator: string;
+  priorityArea: string;
+  municipality: string;
+  planningArea: string;
+  iplanCategory: string;
+  dataSource: string;
+} {
+  return { ...t.search.groups, ...t.search.groupLabels };
+}
+
+function buildIndex(locale: Locale) {
+  const entries: Entry[] = [];
 
   HEADLINE_INDICATORS.forEach((i) => {
+    const label = locale === "es" ? i.labelEs : locale === "pl" ? i.labelPl : i.label;
     entries.push({
-      title: i.label,
-      category: "Indicator",
+      title: label,
+      categoryKey: "indicator",
       href: `/priorities`,
       body: `${i.value}${i.unit} · ${i.source}`,
-      group: "Indicators",
+      groupKey: "indicators",
     });
   });
   PRIORITY_AREAS.forEach((p) => {
+    const name = locale === "es" ? p.nameEs : locale === "pl" ? p.namePl : p.name;
+    const headline = locale === "es" ? p.headlineEs : locale === "pl" ? p.headlinePl : p.headline;
     entries.push({
-      title: p.name,
-      category: "Priority area",
+      title: name,
+      categoryKey: "priorityArea",
       href: `/priorities/${p.slug}`,
-      body: p.headline,
-      group: "Priority areas",
+      body: headline,
+      groupKey: "priorityAreas",
     });
   });
   MUNICIPALITIES.forEach((m) => {
     entries.push({
       title: m.name,
-      category: "Municipality",
+      categoryKey: "municipality",
       href: `/map?place=${m.id}`,
       body: `Population ${m.population.toLocaleString()}`,
-      group: "Places",
+      groupKey: "places",
     });
   });
   PLANNING_AREAS.forEach((pa) => {
     entries.push({
       title: pa.name,
-      category: "Planning Area",
+      categoryKey: "planningArea",
       href: `/map?place=${pa.id}`,
       body: pa.description,
-      group: "Places",
+      groupKey: "places",
     });
   });
   IPLAN_CATEGORIES.forEach((c) => {
+    const name = locale === "es" ? c.nameEs : locale === "pl" ? c.namePl : c.name;
+    const desc = locale === "es" ? c.descriptionEs : locale === "pl" ? c.descriptionPl : c.description;
     entries.push({
-      title: c.name,
-      category: "IPLAN category",
+      title: name,
+      categoryKey: "iplanCategory",
       href: `/priorities`,
-      body: c.description,
-      group: "Framework",
+      body: desc,
+      groupKey: "framework",
     });
   });
   DATA_SOURCES.forEach((s) => {
     entries.push({
       title: s.name,
-      category: "Data source",
+      categoryKey: "dataSource",
       href: `/sources`,
       body: s.description,
-      group: "Sources",
+      groupKey: "sources",
     });
   });
 
@@ -76,37 +108,37 @@ function buildIndex() {
 }
 
 function SearchContent() {
+  const { t, locale } = useLocale();
   const params = useSearchParams();
   const q = params.get("q")?.toLowerCase() ?? "";
-  const index = useMemo(buildIndex, []);
+  const index = useMemo(() => buildIndex(locale), [locale]);
   const results = useMemo(() => {
     if (!q) return [];
     return index.filter(
       (e) =>
         e.title.toLowerCase().includes(q) ||
-        e.body.toLowerCase().includes(q) ||
-        e.category.toLowerCase().includes(q) ||
-        e.group.toLowerCase().includes(q)
+        e.body.toLowerCase().includes(q)
     );
   }, [q, index]);
 
+  const labels = getGroupLabels(t);
   const grouped = results.reduce<Record<string, typeof results>>((acc, r) => {
-    (acc[r.group] = acc[r.group] ?? []).push(r);
+    (acc[r.groupKey] = acc[r.groupKey] ?? []).push(r);
     return acc;
   }, {});
 
   return (
     <div>
       <PageHeader
-        eyebrow="Search"
-        title={q ? `Results for “${q}”` : "Search the atlas"}
-        lede={`${results.length} result${results.length === 1 ? "" : "s"} across indicators, places, priority areas, framework categories, and data sources.`}
+        eyebrow={t.search.eyebrow}
+        title={q ? t.search.titleFor(q) : t.search.titlePlaceholder}
+        lede={t.search.lede(results.length)}
         meta={
           <div className="flex gap-2">
-            <Tag>Indicators</Tag>
-            <Tag>Places</Tag>
-            <Tag>Priority areas</Tag>
-            <Tag>Sources</Tag>
+            <Tag>{t.search.tags.indicators}</Tag>
+            <Tag>{t.search.tags.places}</Tag>
+            <Tag>{t.search.tags.priorityAreas}</Tag>
+            <Tag>{t.search.tags.sources}</Tag>
           </div>
         }
       />
@@ -114,26 +146,19 @@ function SearchContent() {
       <section className="bg-paper py-12">
         <div className="container mx-auto">
           {!q && (
-            <p className="text-lg text-ink-soft">
-              Use the search bar in the header, or press ⌘K anywhere in the atlas.
-            </p>
+            <p className="text-lg text-ink-soft">{t.search.prompt}</p>
           )}
 
           {q && results.length === 0 && (
             <div className="max-w-xl">
-              <p className="font-display text-2xl text-kane-blue-ink">
-                Nothing found. Try a broader term.
-              </p>
-              <p className="mt-4 text-sm text-ink-soft leading-relaxed">
-                Suggestions: <em>diabetes</em>, <em>Aurora</em>, <em>behavioral</em>, <em>SVI</em>,
-                <em> Planning Area</em>, <em>PLACES</em>.
-              </p>
+              <p className="font-display text-2xl text-kane-blue-ink">{t.search.notFound}</p>
+              <p className="mt-4 text-sm text-ink-soft leading-relaxed">{t.search.notFoundBody}</p>
             </div>
           )}
 
           {Object.entries(grouped).map(([group, items]) => (
             <div key={group} className="mb-10">
-              <Eyebrow>{group}</Eyebrow>
+              <Eyebrow>{labels[group as keyof typeof labels]}</Eyebrow>
               <div className="mt-4 divide-y divide-rule border-t border-b border-rule">
                 {items.map((r) => (
                   <Link
@@ -143,7 +168,7 @@ function SearchContent() {
                   >
                     <div className="md:col-span-3">
                       <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-kane-blue-deep">
-                        {r.category}
+                        {labels[r.categoryKey]}
                       </span>
                     </div>
                     <div className="md:col-span-6">

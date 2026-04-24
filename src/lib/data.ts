@@ -24,6 +24,8 @@ export const IPLAN_CATEGORIES: {
   nameEs: string;
   namePl: string;
   description: string;
+  descriptionEs: string;
+  descriptionPl: string;
 }[] = [
   {
     id: "chronic-disease",
@@ -32,6 +34,10 @@ export const IPLAN_CATEGORIES: {
     namePl: "Choroby przewlekłe",
     description:
       "Diabetes, heart disease, hypertension, stroke, cancer, COPD. Tracks prevalence, management, and outcomes.",
+    descriptionEs:
+      "Diabetes, enfermedades cardíacas, hipertensión, accidente cerebrovascular, cáncer, EPOC. Rastrea prevalencia, manejo y resultados.",
+    descriptionPl:
+      "Cukrzyca, choroby serca, nadciśnienie, udar, nowotwory, POChP. Śledzi chorobowość, leczenie i wyniki.",
   },
   {
     id: "maternal-child",
@@ -40,6 +46,10 @@ export const IPLAN_CATEGORIES: {
     namePl: "Zdrowie matki i dziecka",
     description:
       "Prenatal care, low birth weight, infant mortality, childhood immunization, adolescent well-being.",
+    descriptionEs:
+      "Atención prenatal, bajo peso al nacer, mortalidad infantil, vacunación infantil, bienestar adolescente.",
+    descriptionPl:
+      "Opieka prenatalna, niska masa urodzeniowa, śmiertelność niemowląt, szczepienia dzieci, dobrostan młodzieży.",
   },
   {
     id: "behavioral-health",
@@ -48,6 +58,10 @@ export const IPLAN_CATEGORIES: {
     namePl: "Zdrowie behawioralne",
     description:
       "Depression, anxiety, substance use, suicide, stress, access to mental health services.",
+    descriptionEs:
+      "Depresión, ansiedad, uso de sustancias, suicidio, estrés, acceso a servicios de salud mental.",
+    descriptionPl:
+      "Depresja, lęk, używanie substancji, samobójstwa, stres, dostęp do usług zdrowia psychicznego.",
   },
   {
     id: "injury-violence",
@@ -56,6 +70,10 @@ export const IPLAN_CATEGORIES: {
     namePl: "Urazy i przemoc",
     description:
       "Motor vehicle crashes, falls, intentional self-harm, interpersonal violence, overdose.",
+    descriptionEs:
+      "Accidentes de tránsito, caídas, autolesiones intencionales, violencia interpersonal, sobredosis.",
+    descriptionPl:
+      "Wypadki drogowe, upadki, umyślne samookaleczenia, przemoc interpersonalna, przedawkowania.",
   },
   {
     id: "access-to-care",
@@ -64,6 +82,10 @@ export const IPLAN_CATEGORIES: {
     namePl: "Dostęp do opieki",
     description:
       "Insurance coverage, primary care, dental, preventive services, language access, transportation.",
+    descriptionEs:
+      "Cobertura de seguro, atención primaria, dental, servicios preventivos, acceso por idioma, transporte.",
+    descriptionPl:
+      "Ubezpieczenie, opieka podstawowa, stomatologia, usługi profilaktyczne, dostęp językowy, transport.",
   },
   {
     id: "environmental-health",
@@ -72,6 +94,10 @@ export const IPLAN_CATEGORIES: {
     namePl: "Zdrowie środowiskowe",
     description:
       "Air quality, drinking water, housing quality, lead exposure, heat events, food access.",
+    descriptionEs:
+      "Calidad del aire, agua potable, calidad de vivienda, exposición al plomo, olas de calor, acceso a alimentos.",
+    descriptionPl:
+      "Jakość powietrza, woda pitna, jakość mieszkań, narażenie na ołów, fale upałów, dostęp do żywności.",
   },
 ];
 
@@ -82,9 +108,24 @@ export type PriorityArea = {
   nameEs: string;
   namePl: string;
   headline: string;
+  headlineEs: string;
+  headlinePl: string;
   summary: string;
-  headlineStat: { value: string; label: string; change: string; direction: "up" | "down" | "flat" };
+  summaryEs: string;
+  summaryPl: string;
+  headlineStat: {
+    value: string;
+    label: string;
+    labelEs: string;
+    labelPl: string;
+    change: string;
+    changeEs: string;
+    changePl: string;
+    direction: "up" | "down" | "flat";
+  };
   lastUpdated: string;
+  lastUpdatedEs: string;
+  lastUpdatedPl: string;
 };
 
 export const PRIORITY_AREAS: PriorityArea[] = [
@@ -95,10 +136,27 @@ export const PRIORITY_AREAS: PriorityArea[] = [
     nameEs: "Diabetes y enfermedad cardiometabólica",
     namePl: "Cukrzyca i choroby kardiometaboliczne",
     headline: "One in ten adults in Kane County lives with diagnosed diabetes.",
+    headlineEs: "Uno de cada diez adultos del Condado de Kane vive con diabetes diagnosticada.",
+    headlinePl: "Jeden na dziesięciu dorosłych w Hrabstwie Kane ma zdiagnozowaną cukrzycę.",
     summary:
       "Prevalence is uneven across the county. Aurora census tracts show rates two to three times those of St. Charles and Geneva. The gap widens among adults over 50.",
-    headlineStat: { value: "10.4%", label: "Adults with diabetes", change: "+0.6 pts since 2019", direction: "up" },
+    summaryEs:
+      "La prevalencia es desigual en el condado. Las secciones censales de Aurora muestran tasas de dos a tres veces las de St. Charles y Geneva. La brecha se amplía entre los adultos mayores de 50 años.",
+    summaryPl:
+      "Chorobowość jest nierówna w hrabstwie. Obwody spisowe Aurory pokazują stawki dwa do trzech razy wyższe niż St. Charles i Genewy. Luka pogłębia się wśród dorosłych powyżej 50. roku życia.",
+    headlineStat: {
+      value: "10.4%",
+      label: "Adults with diabetes",
+      labelEs: "Adultos con diabetes",
+      labelPl: "Dorośli z cukrzycą",
+      change: "+0.6 pts since 2019",
+      changeEs: "+0,6 pts desde 2019",
+      changePl: "+0,6 pkt od 2019",
+      direction: "up",
+    },
     lastUpdated: "March 2026",
+    lastUpdatedEs: "marzo de 2026",
+    lastUpdatedPl: "marzec 2026",
   },
   {
     slug: "maternal-child-health",
@@ -108,22 +166,60 @@ export const PRIORITY_AREAS: PriorityArea[] = [
     namePl: "Zdrowie matki i niemowlęcia",
     headline:
       "Black infants in Kane County die before their first birthday at nearly three times the rate of white infants.",
+    headlineEs:
+      "Los bebés negros en el Condado de Kane mueren antes de su primer cumpleaños a casi tres veces la tasa de los bebés blancos.",
+    headlinePl:
+      "Czarne niemowlęta w Hrabstwie Kane umierają przed pierwszymi urodzinami prawie trzy razy częściej niż białe niemowlęta.",
     summary:
       "Low birth weight, late prenatal care, and infant mortality all disaggregate sharply by race and by tract. Spanish-speaking mothers report the highest first-trimester prenatal care rates.",
-    headlineStat: { value: "2.8×", label: "Black–White infant mortality ratio", change: "Flat since 2015", direction: "flat" },
+    summaryEs:
+      "Bajo peso al nacer, atención prenatal tardía y mortalidad infantil se desagregan de forma marcada por raza y por sección. Las madres hispanohablantes reportan las tasas más altas de atención prenatal en el primer trimestre.",
+    summaryPl:
+      "Niska masa urodzeniowa, późna opieka prenatalna i śmiertelność niemowląt silnie dezagregują się według rasy i obwodu. Hiszpańskojęzyczne matki zgłaszają najwyższe wskaźniki opieki prenatalnej w pierwszym trymestrze.",
+    headlineStat: {
+      value: "2.8×",
+      label: "Black–White infant mortality ratio",
+      labelEs: "Razón de mortalidad infantil negros–blancos",
+      labelPl: "Stosunek śmiertelności niemowląt czarnych do białych",
+      change: "Flat since 2015",
+      changeEs: "Estable desde 2015",
+      changePl: "Stabilne od 2015",
+      direction: "flat",
+    },
     lastUpdated: "February 2026",
+    lastUpdatedEs: "febrero de 2026",
+    lastUpdatedPl: "luty 2026",
   },
   {
     slug: "behavioral-health",
     category: "behavioral-health",
     name: "Behavioral health and substance use",
     nameEs: "Salud conductual y uso de sustancias",
-    namePl: "Zdrowie behawioralne i uzywki",
+    namePl: "Zdrowie behawioralne i używki",
     headline: "One in four Kane County adults reported frequent mental distress in 2024. Among LGBTQ+ adults, it was nearly one in two.",
+    headlineEs:
+      "Uno de cada cuatro adultos del Condado de Kane reportó angustia mental frecuente en 2024. Entre adultos LGBTQ+, fue casi uno de cada dos.",
+    headlinePl:
+      "Jeden na czterech dorosłych mieszkańców Hrabstwa Kane zgłosił częsty stres psychiczny w 2024 r. Wśród dorosłych LGBTQ+ było to niemal jeden na dwóch.",
     summary:
       "Reported mental distress climbed sharply between 2019 and 2022 and has not returned to pre-pandemic levels. Youth suicide attempts remain above state averages.",
-    headlineStat: { value: "24.1%", label: "Adults reporting frequent mental distress", change: "+5.2 pts since 2019", direction: "up" },
+    summaryEs:
+      "La angustia mental reportada aumentó fuertemente entre 2019 y 2022 y no ha regresado a niveles prepandémicos. Los intentos de suicidio juveniles siguen por encima de los promedios estatales.",
+    summaryPl:
+      "Zgłaszany stres psychiczny gwałtownie wzrósł między 2019 a 2022 rokiem i nie powrócił do poziomów sprzed pandemii. Próby samobójcze młodzieży pozostają powyżej średnich stanowych.",
+    headlineStat: {
+      value: "24.1%",
+      label: "Adults reporting frequent mental distress",
+      labelEs: "Adultos que reportan angustia mental frecuente",
+      labelPl: "Dorośli zgłaszający częsty stres psychiczny",
+      change: "+5.2 pts since 2019",
+      changeEs: "+5,2 pts desde 2019",
+      changePl: "+5,2 pkt od 2019",
+      direction: "up",
+    },
     lastUpdated: "March 2026",
+    lastUpdatedEs: "marzo de 2026",
+    lastUpdatedPl: "marzec 2026",
   },
   {
     slug: "access-to-care",
@@ -132,10 +228,29 @@ export const PRIORITY_AREAS: PriorityArea[] = [
     nameEs: "Acceso a atención primaria y preventiva",
     namePl: "Dostęp do opieki podstawowej i profilaktycznej",
     headline: "Thirteen percent of adults in Kane County have no personal doctor. Among uninsured adults, it is more than half.",
+    headlineEs:
+      "El trece por ciento de los adultos del Condado de Kane no tiene médico de cabecera. Entre los adultos sin seguro, es más de la mitad.",
+    headlinePl:
+      "Trzynaście procent dorosłych w Hrabstwie Kane nie ma lekarza rodzinnego. Wśród dorosłych bez ubezpieczenia to ponad połowa.",
     summary:
       "Language access and insurance coverage are the two strongest predictors of whether a Kane County resident has a usual source of care.",
-    headlineStat: { value: "13.2%", label: "Adults with no personal doctor", change: "−1.4 pts since 2019", direction: "down" },
+    summaryEs:
+      "El acceso por idioma y la cobertura de seguro son los dos predictores más fuertes de si un residente del Condado de Kane tiene una fuente habitual de atención.",
+    summaryPl:
+      "Dostęp językowy i ubezpieczenie to dwa najsilniejsze predyktory tego, czy mieszkaniec Hrabstwa Kane ma stałe źródło opieki.",
+    headlineStat: {
+      value: "13.2%",
+      label: "Adults with no personal doctor",
+      labelEs: "Adultos sin médico de cabecera",
+      labelPl: "Dorośli bez lekarza rodzinnego",
+      change: "−1.4 pts since 2019",
+      changeEs: "−1,4 pts desde 2019",
+      changePl: "−1,4 pkt od 2019",
+      direction: "down",
+    },
     lastUpdated: "March 2026",
+    lastUpdatedEs: "marzo de 2026",
+    lastUpdatedPl: "marzec 2026",
   },
   {
     slug: "injury-and-violence",
@@ -144,10 +259,29 @@ export const PRIORITY_AREAS: PriorityArea[] = [
     nameEs: "Prevención de lesiones, sobredosis y violencia",
     namePl: "Zapobieganie urazom, przedawkowaniom i przemocy",
     headline: "Opioid overdose deaths in Kane County have plateaued after three years of rapid increase.",
+    headlineEs:
+      "Las muertes por sobredosis de opioides en el Condado de Kane se han estabilizado tras tres años de rápido aumento.",
+    headlinePl:
+      "Zgony z przedawkowania opioidów w Hrabstwie Kane ustabilizowały się po trzech latach szybkiego wzrostu.",
     summary:
       "Naloxone distribution and fentanyl test strip access expanded in 2024. Overdose mortality is still double its 2015 level.",
-    headlineStat: { value: "26.4", label: "Overdose deaths per 100k", change: "−1.1 pts since 2023", direction: "down" },
+    summaryEs:
+      "La distribución de naloxona y el acceso a tiras de prueba de fentanilo se ampliaron en 2024. La mortalidad por sobredosis sigue siendo el doble del nivel de 2015.",
+    summaryPl:
+      "Dystrybucja naloksonu i dostęp do pasków testowych na fentanyl zostały rozszerzone w 2024 r. Śmiertelność z przedawkowania wciąż jest dwukrotnie wyższa niż w 2015 r.",
+    headlineStat: {
+      value: "26.4",
+      label: "Overdose deaths per 100k",
+      labelEs: "Muertes por sobredosis por 100k",
+      labelPl: "Zgony z przedawkowania na 100 tys.",
+      change: "−1.1 pts since 2023",
+      changeEs: "−1,1 pts desde 2023",
+      changePl: "−1,1 pkt od 2023",
+      direction: "down",
+    },
     lastUpdated: "January 2026",
+    lastUpdatedEs: "enero de 2026",
+    lastUpdatedPl: "styczeń 2026",
   },
   {
     slug: "environmental-health",
@@ -156,10 +290,29 @@ export const PRIORITY_AREAS: PriorityArea[] = [
     nameEs: "Salud ambiental y vivienda",
     namePl: "Zdrowie środowiskowe i mieszkalnictwo",
     headline: "Roughly one in six Kane County households reports a severe housing cost burden.",
+    headlineEs:
+      "Aproximadamente uno de cada seis hogares del Condado de Kane reporta una carga severa por costo de vivienda.",
+    headlinePl:
+      "Mniej więcej jedno na sześć gospodarstw domowych w Hrabstwie Kane zgłasza poważne obciążenie kosztami mieszkania.",
     summary:
       "Housing cost burden, lead exposure risk, and poor air quality days cluster in the same tracts that carry the highest social vulnerability.",
-    headlineStat: { value: "16.8%", label: "Severe housing cost burden", change: "+0.9 pts since 2019", direction: "up" },
+    summaryEs:
+      "La carga por costo de vivienda, el riesgo de exposición al plomo y los días de mala calidad del aire se concentran en las mismas secciones que presentan la mayor vulnerabilidad social.",
+    summaryPl:
+      "Obciążenie kosztami mieszkania, ryzyko narażenia na ołów i dni o złej jakości powietrza skupiają się w tych samych obwodach, które mają najwyższą podatność społeczną.",
+    headlineStat: {
+      value: "16.8%",
+      label: "Severe housing cost burden",
+      labelEs: "Carga severa por costo de vivienda",
+      labelPl: "Poważne obciążenie kosztami mieszkania",
+      change: "+0.9 pts since 2019",
+      changeEs: "+0,9 pts desde 2019",
+      changePl: "+0,9 pkt od 2019",
+      direction: "up",
+    },
     lastUpdated: "February 2026",
+    lastUpdatedEs: "febrero de 2026",
+    lastUpdatedPl: "luty 2026",
   },
 ];
 

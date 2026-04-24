@@ -93,7 +93,7 @@ export function KaneMap({
       <MapContainer
         center={[41.935, -88.43]}
         zoom={10}
-        scrollWheelZoom
+        scrollWheelZoom={false}
         className="h-full w-full"
         attributionControl={false}
       >

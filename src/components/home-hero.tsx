@@ -48,25 +48,25 @@ export function HomeHero() {
           <dl className="mt-14 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl border-t border-rule pt-8 text-sm">
             <div>
               <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-soft/70 mb-1">
-                Population
+                {t.hero.populationLabel}
               </dt>
               <dd className="font-display tnum text-xl text-kane-blue-ink">535,041</dd>
             </div>
             <div>
               <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-soft/70 mb-1">
-                Municipalities
+                {t.hero.municipalitiesLabel}
               </dt>
               <dd className="font-display tnum text-xl text-kane-blue-ink">16</dd>
             </div>
             <div>
               <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-soft/70 mb-1">
-                Census tracts
+                {t.hero.tractsLabel}
               </dt>
               <dd className="font-display tnum text-xl text-kane-blue-ink">144</dd>
             </div>
             <div>
               <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-soft/70 mb-1">
-                CHA cycles
+                {t.hero.chaLabel}
               </dt>
               <dd className="font-display tnum text-xl text-kane-blue-ink">4</dd>
             </div>
@@ -95,19 +95,19 @@ export function HomeHero() {
           <div className="mt-8 space-y-4 text-sm">
             <div className="flex items-baseline justify-between border-b border-rule pb-3">
               <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-soft/70">
-                Volume
+                {t.volume}
               </span>
               <span className="font-display text-kane-blue-ink">I · 2024</span>
             </div>
             <div className="flex items-baseline justify-between border-b border-rule pb-3">
               <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-soft/70">
-                Publisher
+                {t.publisher}
               </span>
               <span className="font-display text-kane-blue-ink">KCHD</span>
             </div>
             <div className="flex items-baseline justify-between border-b border-rule pb-3">
               <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-soft/70">
-                Last refreshed
+                {t.lastRefreshed}
               </span>
               <span className="font-display text-kane-blue-ink">
                 {new Date("2026-04-10").toLocaleDateString(locale === "pl" ? "pl-PL" : locale === "es" ? "es-US" : "en-US", {
@@ -119,7 +119,7 @@ export function HomeHero() {
             </div>
             <div className="flex items-baseline justify-between border-b border-rule pb-3">
               <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-soft/70">
-                Languages
+                {t.languages}
               </span>
               <span className="font-display text-kane-blue-ink">EN · ES · PL</span>
             </div>
@@ -132,7 +132,7 @@ export function HomeHero() {
           </div>
 
           <p className="mt-8 border-l-2 border-kane-amber pl-4 font-display italic text-ink-soft leading-relaxed text-pretty">
-            An atlas of the data behind Kane County’s health. Open to everyone.
+            {t.hero.tagline}
           </p>
         </aside>
 

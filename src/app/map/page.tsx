@@ -3,146 +3,154 @@
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import { PageHeader, Eyebrow, EditorialCard, Tag } from "@/components/ui/editorial";
-import { GEO_LEVELS, MUNICIPALITIES, PLANNING_AREAS } from "@/lib/data";
+import { GEO_LEVELS } from "@/lib/data";
 import { cn } from "@/lib/utils";
+import { useLocale } from "@/lib/i18n";
 
 const KaneMap = dynamic(() => import("@/components/map/kane-map").then((m) => m.KaneMap), {
   ssr: false,
   loading: () => (
     <div className="h-full w-full bg-paper-deep flex items-center justify-center">
       <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-soft">
-        Loading Kane County geometry…
+        Loading…
       </span>
     </div>
   ),
 });
 
-const INDICATORS = [
-  { id: "diabetes", label: "Diabetes prevalence", category: "Chronic Disease" },
-  { id: "obesity", label: "Obesity", category: "Chronic Disease" },
-  { id: "hypertension", label: "Hypertension", category: "Chronic Disease" },
-  { id: "mental_distress", label: "Frequent mental distress", category: "Behavioral Health" },
-  { id: "no_primary_care", label: "No personal doctor", category: "Access to Care" },
-  { id: "uninsured", label: "Uninsured adults", category: "Access to Care" },
-  { id: "infant_mortality", label: "Infant mortality", category: "Maternal & Child" },
-  { id: "overdose", label: "Overdose mortality", category: "Injury & Violence" },
-];
+const INDICATOR_IDS = [
+  "diabetes",
+  "obesity",
+  "hypertension",
+  "mental_distress",
+  "no_primary_care",
+  "uninsured",
+  "infant_mortality",
+  "overdose",
+] as const;
 
-const DEMO_FILTERS = [
-  { id: "overall", label: "Overall" },
-  { id: "race-white", label: "White, NH" },
-  { id: "race-black", label: "Black / AA" },
-  { id: "race-latino", label: "Hispanic / Latino" },
-  { id: "race-asian", label: "Asian" },
-  { id: "income-low", label: "<200% FPL" },
-  { id: "age-55-plus", label: "Age 55+" },
-  { id: "lang-es", label: "Spanish speakers" },
-  { id: "lang-pl", label: "Polish speakers" },
-];
+const DEMO_FILTER_IDS = [
+  "overall",
+  "race-white",
+  "race-black",
+  "race-latino",
+  "race-asian",
+  "income-low",
+  "age-55-plus",
+  "lang-es",
+  "lang-pl",
+] as const;
 
 export default function MapPage() {
-  const [indicator, setIndicator] = useState("diabetes");
+  const { t, locale } = useLocale();
+  const [indicator, setIndicator] = useState<string>("diabetes");
   const [geoLevel, setGeoLevel] = useState<string>("tract");
   const [svi, setSvi] = useState(true);
   const [demographic, setDemographic] = useState<string>("overall");
 
-  const selectedIndicator = INDICATORS.find((i) => i.id === indicator);
+  const selectedIndicator = t.map.indicators[indicator];
+  const currentGeo = GEO_LEVELS.find((g) => g.id === geoLevel);
+  const currentGeoLabel =
+    locale === "es" ? currentGeo?.labelEs : locale === "pl" ? currentGeo?.labelPl : currentGeo?.label;
 
   return (
     <div>
       <PageHeader
-        eyebrow="Section 02 · Interactive map"
-        title="Map every indicator at every scale."
-        lede="Choropleth at the census tract level with a togglable CDC Social Vulnerability Index overlay. Filter by indicator and by demographic slice. Five geographic levels available."
+        eyebrow={t.map.eyebrow}
+        title={t.map.title}
+        lede={t.map.lede}
         meta={
           <div className="flex flex-wrap items-center gap-2">
-            <Tag>Five geographic levels</Tag>
-            <Tag>SVI overlay</Tag>
-            <Tag>Demographic cross-tabs</Tag>
-            <Tag>Basemap: CARTO Light</Tag>
+            <Tag>{t.map.tags.geoLevels}</Tag>
+            <Tag>{t.map.tags.svi}</Tag>
+            <Tag>{t.map.tags.crosstabs}</Tag>
+            <Tag>{t.map.tags.basemap}</Tag>
           </div>
         }
       />
 
       <section className="bg-paper">
         <div className="container mx-auto py-10 grid lg:grid-cols-12 gap-8">
-          {/* Left controls */}
           <aside className="lg:col-span-3 space-y-6">
             <div>
-              <Eyebrow>Indicator</Eyebrow>
+              <Eyebrow>{t.map.indicator}</Eyebrow>
               <div className="mt-2 space-y-1">
-                {INDICATORS.map((i) => (
-                  <button
-                    key={i.id}
-                    onClick={() => setIndicator(i.id)}
-                    className={cn(
-                      "group block w-full text-left px-3 py-2 border-l-2 transition-colors",
-                      indicator === i.id
-                        ? "border-kane-amber bg-white"
-                        : "border-transparent hover:border-rule hover:bg-white"
-                    )}
-                  >
-                    <div
+                {INDICATOR_IDS.map((id) => {
+                  const meta = t.map.indicators[id];
+                  return (
+                    <button
+                      key={id}
+                      onClick={() => setIndicator(id)}
                       className={cn(
-                        "font-display text-sm leading-tight",
-                        indicator === i.id ? "text-kane-blue-ink" : "text-ink"
+                        "group block w-full text-left px-3 py-2 border-l-2 transition-colors",
+                        indicator === id
+                          ? "border-kane-amber bg-white"
+                          : "border-transparent hover:border-rule hover:bg-white"
                       )}
                     >
-                      {i.label}
-                    </div>
-                    <div className="font-mono text-[10px] uppercase tracking-[0.12em] text-ink-soft/70 mt-0.5">
-                      {i.category}
-                    </div>
-                  </button>
-                ))}
+                      <div
+                        className={cn(
+                          "font-display text-sm leading-tight",
+                          indicator === id ? "text-kane-blue-ink" : "text-ink"
+                        )}
+                      >
+                        {meta.label}
+                      </div>
+                      <div className="font-mono text-[10px] uppercase tracking-[0.12em] text-ink-soft/70 mt-0.5">
+                        {meta.category}
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
             <div className="pt-4 border-t border-rule">
-              <Eyebrow>Geographic level</Eyebrow>
+              <Eyebrow>{t.map.geoLevel}</Eyebrow>
               <div className="mt-3 grid grid-cols-2 gap-1.5">
-                {GEO_LEVELS.map((g) => (
-                  <button
-                    key={g.id}
-                    onClick={() => setGeoLevel(g.id)}
-                    className={cn(
-                      "px-2 py-1.5 border text-[11px] text-left leading-tight transition-colors",
-                      geoLevel === g.id
-                        ? "bg-kane-blue-ink border-kane-blue-ink text-white"
-                        : "border-rule text-ink-soft hover:border-kane-blue-ink hover:text-kane-blue-ink"
-                    )}
-                  >
-                    {g.label}
-                  </button>
-                ))}
+                {GEO_LEVELS.map((g) => {
+                  const label = locale === "es" ? g.labelEs : locale === "pl" ? g.labelPl : g.label;
+                  return (
+                    <button
+                      key={g.id}
+                      onClick={() => setGeoLevel(g.id)}
+                      className={cn(
+                        "px-2 py-1.5 border text-[11px] text-left leading-tight transition-colors",
+                        geoLevel === g.id
+                          ? "bg-kane-blue-ink border-kane-blue-ink text-white"
+                          : "border-rule text-ink-soft hover:border-kane-blue-ink hover:text-kane-blue-ink"
+                      )}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
               </div>
-              <p className="mt-2 text-[11px] text-ink-soft/70 leading-snug">
-                Currently showing: census tract choropleth (144 Kane County tracts).
-              </p>
+              <p className="mt-2 text-[11px] text-ink-soft/70 leading-snug">{t.map.currentlyShowing}</p>
             </div>
 
             <div className="pt-4 border-t border-rule">
-              <Eyebrow>Demographic slice</Eyebrow>
+              <Eyebrow>{t.map.demographicSlice}</Eyebrow>
               <div className="mt-3 grid grid-cols-2 gap-1.5">
-                {DEMO_FILTERS.map((d) => (
+                {DEMO_FILTER_IDS.map((id) => (
                   <button
-                    key={d.id}
-                    onClick={() => setDemographic(d.id)}
+                    key={id}
+                    onClick={() => setDemographic(id)}
                     className={cn(
                       "px-2 py-1.5 border text-[11px] text-left leading-tight transition-colors",
-                      demographic === d.id
+                      demographic === id
                         ? "bg-kane-amber border-kane-amber text-white"
                         : "border-rule text-ink-soft hover:border-kane-amber hover:text-kane-amber"
                     )}
                   >
-                    {d.label}
+                    {t.map.demoFilters[id]}
                   </button>
                 ))}
               </div>
             </div>
 
             <div className="pt-4 border-t border-rule">
-              <Eyebrow>Overlays</Eyebrow>
+              <Eyebrow>{t.map.overlays}</Eyebrow>
               <label className="mt-3 flex items-start gap-3 cursor-pointer group">
                 <input
                   type="checkbox"
@@ -152,26 +160,25 @@ export default function MapPage() {
                 />
                 <div>
                   <div className="font-display text-sm text-kane-blue-ink leading-tight">
-                    CDC Social Vulnerability Index
+                    {t.map.sviToggle}
                   </div>
                   <div className="font-mono text-[10px] uppercase tracking-[0.12em] text-ink-soft/70 mt-0.5">
-                    Tracts with SVI &gt; 0.5 highlighted
+                    {t.map.sviTract}
                   </div>
                 </div>
               </label>
             </div>
           </aside>
 
-          {/* Map container */}
           <div className="lg:col-span-9">
             <div className="bg-white border border-rule h-[620px] relative">
-              <div className="absolute top-4 left-4 z-[400] bg-white/95 border border-rule px-4 py-3 shadow-editorial">
-                <Eyebrow>Now viewing</Eyebrow>
+              <div className="absolute top-4 left-14 z-[400] bg-white/95 border border-rule px-4 py-3 shadow-editorial">
+                <Eyebrow>{t.map.nowViewing}</Eyebrow>
                 <p className="mt-1 font-display text-base text-kane-blue-ink leading-tight max-w-xs">
-                  {selectedIndicator?.label} · {DEMO_FILTERS.find((d) => d.id === demographic)?.label}
+                  {selectedIndicator?.label} · {t.map.demoFilters[demographic as keyof typeof t.map.demoFilters]}
                 </p>
                 <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.12em] text-ink-soft/70">
-                  {GEO_LEVELS.find((g) => g.id === geoLevel)?.label} · {indicator === "svi" ? "CDC SVI 2022" : "CDC PLACES 2024 + ACS 5-yr"}
+                  {currentGeoLabel} · CDC PLACES 2024 + ACS 5-yr
                 </p>
               </div>
               <KaneMap indicator={indicator} svi={svi} />
@@ -179,33 +186,27 @@ export default function MapPage() {
 
             <div className="mt-6 grid md:grid-cols-3 gap-4">
               <EditorialCard className="p-5">
-                <Eyebrow>County aggregate</Eyebrow>
+                <Eyebrow>{t.map.countyAggregate}</Eyebrow>
                 <p className="mt-2 font-display tnum text-3xl text-kane-blue-ink">
                   {countyAggregate(indicator)}
                   <span className="text-base text-ink-soft">{countyUnit(indicator)}</span>
                 </p>
-                <p className="mt-2 text-xs text-ink-soft leading-relaxed">
-                  Kane County weighted average across all 144 tracts.
-                </p>
+                <p className="mt-2 text-xs text-ink-soft leading-relaxed">{t.map.countyAggregateBody}</p>
               </EditorialCard>
               <EditorialCard className="p-5">
-                <Eyebrow>Highest tract</Eyebrow>
+                <Eyebrow>{t.map.highestTract}</Eyebrow>
                 <p className="mt-2 font-display tnum text-3xl text-kane-amber">
                   {topTract(indicator).value}
                   <span className="text-base text-ink-soft">{countyUnit(indicator)}</span>
                 </p>
-                <p className="mt-2 text-xs text-ink-soft leading-relaxed">
-                  {topTract(indicator).name}
-                </p>
+                <p className="mt-2 text-xs text-ink-soft leading-relaxed">{topTract(indicator).name}</p>
               </EditorialCard>
               <EditorialCard className="p-5">
-                <Eyebrow>County vs. Illinois</Eyebrow>
+                <Eyebrow>{t.map.countyVsIllinois}</Eyebrow>
                 <p className="mt-2 font-display tnum text-3xl text-kane-blue-ink">
                   {stateDelta(indicator)}
                 </p>
-                <p className="mt-2 text-xs text-ink-soft leading-relaxed">
-                  Kane County compared to the Illinois statewide rate (IDPH 2024).
-                </p>
+                <p className="mt-2 text-xs text-ink-soft leading-relaxed">{t.map.countyVsIllinoisBody}</p>
               </EditorialCard>
             </div>
           </div>

@@ -57,7 +57,7 @@ export function SiteHeader() {
         <Link
           href="/"
           className="flex items-center gap-3 group"
-          aria-label="Kane County Community Health Atlas, home"
+          aria-label={t.brandAria}
           data-tour="brand"
         >
           <div className="flex items-center gap-3">
@@ -72,10 +72,10 @@ export function SiteHeader() {
             <div className="hidden sm:block h-8 w-px bg-rule" aria-hidden />
             <div className="hidden sm:flex flex-col leading-tight">
               <span className="font-display text-[15px] font-medium tracking-tight text-kane-blue-ink">
-                Community Health Atlas
+                {t.communityHealthAtlas}
               </span>
               <span className="text-[10px] uppercase tracking-[0.14em] text-ink-soft">
-                Kane County, Illinois
+                {t.kaneCountyIllinois}
               </span>
             </div>
           </div>
@@ -119,11 +119,11 @@ export function SiteHeader() {
               setTimeout(() => searchRef.current?.focus(), 50);
             }}
             className="flex items-center gap-2 rounded-sm border border-rule px-3 py-1.5 text-xs text-ink-soft hover:border-kane-blue-ink hover:text-kane-blue-ink transition-colors"
-            aria-label="Search the atlas"
+            aria-label={t.searchButtonLabel}
             data-tour="search"
           >
             <Search size={14} />
-            <span className="hidden md:inline">Search</span>
+            <span className="hidden md:inline">{t.searchButtonLabel}</span>
             <kbd className="hidden md:inline font-mono text-[10px] text-ink-soft/60">⌘K</kbd>
           </button>
 
@@ -132,7 +132,7 @@ export function SiteHeader() {
             <button
               onClick={() => setLangOpen((v) => !v)}
               className="flex items-center gap-1.5 rounded-sm border border-rule px-3 py-1.5 text-xs text-ink-soft hover:border-kane-blue-ink hover:text-kane-blue-ink transition-colors"
-              aria-label="Change language"
+              aria-label={t.changeLanguageLabel}
               aria-expanded={langOpen}
               data-tour="language"
             >
@@ -168,7 +168,7 @@ export function SiteHeader() {
           <button
             onClick={() => setMobileOpen((v) => !v)}
             className="lg:hidden rounded-sm border border-rule p-1.5 text-ink-soft hover:text-kane-blue-ink"
-            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            aria-label={mobileOpen ? t.closeMenuLabel : t.openMenuLabel}
             aria-expanded={mobileOpen}
           >
             {mobileOpen ? <X size={18} /> : <Menu size={18} />}
@@ -203,7 +203,7 @@ export function SiteHeader() {
                 onClick={() => setSearchOpen(false)}
                 className="text-xs uppercase tracking-[0.14em] text-ink-soft hover:text-kane-blue-ink"
               >
-                Close
+                {t.closeLabel}
               </button>
             </form>
           </div>

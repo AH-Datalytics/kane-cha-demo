@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { PageHeader, Eyebrow, RuleEditorial, Tag } from "@/components/ui/editorial";
 import { DisparityBars } from "@/components/charts/disparity-bars";
 import {
@@ -38,6 +38,32 @@ export default function EquityPage() {
   const [lens, setLens] = useState<(typeof LENS_IDS)[number]>("race");
 
   const allData = EQUITY_BY_INDICATOR[indicator] ?? [];
+
+  // Which lenses have real disaggregated data for this indicator (at least 1 non-overall slice)
+  const availableLenses = useMemo(() => {
+    const sliceSet = new Set(allData.map((d) => d.slice));
+    const result: Record<(typeof LENS_IDS)[number], boolean> = {
+      race: false,
+      income: false,
+      age: false,
+      language: false,
+      lgbtq: false,
+    };
+    (Object.keys(LENS_SLICES) as (typeof LENS_IDS)[number][]).forEach((key) => {
+      const nonOverall = LENS_SLICES[key].filter((s) => s !== "overall");
+      result[key] = nonOverall.some((s) => sliceSet.has(s));
+    });
+    return result;
+  }, [allData]);
+
+  // If the current lens has no data for the selected indicator, auto-switch to the first available
+  useEffect(() => {
+    if (!availableLenses[lens]) {
+      const fallback = LENS_IDS.find((l) => availableLenses[l]);
+      if (fallback) setLens(fallback);
+    }
+  }, [availableLenses, lens]);
+
   const filtered = allData.filter((d) => LENS_SLICES[lens].includes(d.slice));
   const indicatorMeta = HEADLINE_INDICATORS.find((i) => i.id === indicator);
   const indLabel =
@@ -95,20 +121,35 @@ export default function EquityPage() {
           <div className="md:col-span-6 md:border-l md:border-rule md:pl-6">
             <Eyebrow>{t.equity.lens}</Eyebrow>
             <div className="mt-2 flex flex-wrap gap-1.5">
-              {LENS_IDS.map((id) => (
-                <button
-                  key={id}
-                  onClick={() => setLens(id)}
-                  className={cn(
-                    "px-3 py-1.5 border text-xs transition-colors",
-                    lens === id
-                      ? "bg-kane-amber border-kane-amber text-white"
-                      : "border-rule text-ink-soft hover:border-kane-amber hover:text-kane-amber"
-                  )}
-                >
-                  {t.equity.lensOptions[id]}
-                </button>
-              ))}
+              {LENS_IDS.map((id) => {
+                const available = availableLenses[id];
+                return (
+                  <button
+                    key={id}
+                    onClick={() => available && setLens(id)}
+                    disabled={!available}
+                    title={
+                      !available
+                        ? locale === "es"
+                          ? "No disponible para este indicador"
+                          : locale === "pl"
+                            ? "Niedostępne dla tego wskaźnika"
+                            : "Not available for this indicator"
+                        : undefined
+                    }
+                    className={cn(
+                      "px-3 py-1.5 border text-xs transition-colors",
+                      !available
+                        ? "border-rule/50 text-ink-soft/30 line-through cursor-not-allowed bg-paper-deep/30"
+                        : lens === id
+                          ? "bg-kane-amber border-kane-amber text-white"
+                          : "border-rule text-ink-soft hover:border-kane-amber hover:text-kane-amber"
+                    )}
+                  >
+                    {t.equity.lensOptions[id]}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -241,25 +282,27 @@ function GeographyStrip({
   const maxDisparity = Math.max(...paValues.map((p) => p.worstValue));
 
   return (
-    <section className="bg-white border-t border-b border-rule py-14">
+    <section
+      className="bg-kane-blue-ink/[0.04] border-t-4 border-kane-amber border-b border-rule py-14"
+      aria-labelledby="equity-geo-strip"
+    >
       <div className="container mx-auto">
         <div className="mb-8 grid md:grid-cols-12 gap-6">
           <div className="md:col-span-6">
             <div className="flex items-center gap-3 mb-2">
-              <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-kane-blue-deep">
-                {locale === "es"
-                  ? "¿Dónde vive la disparidad?"
-                  : locale === "pl"
-                    ? "Gdzie mieszka nierówność?"
-                    : "Where does the disparity live?"}
+              <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-kane-amber">
+                Section 04b · Geographic equity
               </span>
             </div>
-            <h2 className="font-display text-3xl text-kane-blue-ink leading-tight text-balance">
+            <h2
+              id="equity-geo-strip"
+              className="font-display text-3xl md:text-4xl text-kane-blue-ink leading-tight text-balance"
+            >
               {locale === "es"
-                ? "Cinco Áreas de Planificación, comparadas."
+                ? `¿Dónde vive la brecha de ${worstName}?`
                 : locale === "pl"
-                  ? "Pięć Obszarów Planowania, porównanych."
-                  : "Five Planning Areas, compared."}
+                  ? `Gdzie mieszka luka ${worstName}?`
+                  : `Where does the ${worstName} gap live?`}
             </h2>
           </div>
           <div className="md:col-span-6 md:border-l md:border-rule md:pl-6">
@@ -280,12 +323,12 @@ function GeographyStrip({
           </div>
         </div>
 
-        <div className="grid md:grid-cols-5 gap-0 border-t border-l border-rule">
+        <div className="grid md:grid-cols-5 gap-0 border-t border-l border-kane-blue-ink/20">
           {paValues.map((pa) => {
             const basePct = (pa.base / maxDisparity) * 100;
             const worstPct = (pa.worstValue / maxDisparity) * 100;
             return (
-              <div key={pa.id} className="border-r border-b border-rule p-5 bg-paper/40">
+              <div key={pa.id} className="border-r border-b border-kane-blue-ink/20 p-5 bg-white">
                 <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-kane-blue-deep">
                   {pa.name}
                 </div>

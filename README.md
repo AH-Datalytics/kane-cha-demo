@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Kane County Community Health Atlas — Prototype
 
-## Getting Started
+Interactive Community Health Assessment and Improvement Plan dashboard for Kane County, Illinois.
+Built for the RFQ 26-029-TK submission as a working demonstration of the proposed approach.
 
-First, run the development server:
+## Architecture
+
+- **Next.js 14** (App Router) + TypeScript, deployed on Vercel
+- **Tailwind CSS** with an editorial design system (paper-white backgrounds, Fraunces display,
+  IBM Plex Sans body, IBM Plex Mono for data)
+- **Recharts** for time series, sparklines, disparity bars
+- **Leaflet + react-leaflet** for tract-level choropleths
+- **driver.js** for the first-visit guided tour
+- **html-to-image** for PNG export; `window.print()` for PDF
+
+## Sections
+
+1. Overview / Priority Areas homepage
+2. Interactive Kane County map (104 real census tracts)
+3. Priority Area deep dives (one page per CHIP priority, organized against IPLAN)
+4. Health Equity dashboard
+5. Custom Report Builder (PDF / CSV / PNG / shareable URL)
+6. Data Sources & Methodology
+
+Plus:
+
+- `/admin` — simulated KCHD staff workspace with usage analytics, data refresh controls,
+  role-based upload form, 20-user directory
+- `/search` — global search over indicators, places, priority areas, and sources
+- Language switcher: English, Spanish, Polish
+- First-visit guided tour via driver.js
+
+## Data
+
+- Real Kane County tract boundaries from the U.S. Census 2023 cartographic files (104 tracts)
+- Illustrative health values grounded in CDC PLACES patterns and Kane County demographics
+- Every source on the Data Sources page is labeled Real vs. Illustrative
+
+## Local development
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Build
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run build
+npm start
+```

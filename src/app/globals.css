@@ -2,26 +2,145 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+    /* Kane County brand palette - extracted from actual logos */
+    --kane-blue: 46 92 138; /* #2e5c8a - courthouse logo */
+    --kane-blue-deep: 8 110 159; /* #086e9f - KCHD primary */
+    --kane-blue-ink: 21 52 82; /* #153452 - deep ink for headlines */
+    --kane-amber: 219 117 44; /* #db752c - KCHD accent */
+    --kane-amber-soft: 245 200 140; /* #f5c88c - light amber wash */
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+    /* Neutrals - warm paper */
+    --paper: 250 248 243; /* #faf8f3 - warm off-white */
+    --paper-deep: 243 239 232; /* #f3efe8 - rule lines */
+    --ink: 23 27 35; /* #171b23 - primary text */
+    --ink-soft: 67 74 88; /* #434a58 - secondary text */
+    --rule: 217 213 204; /* #d9d5cc - borders */
+
+    /* Data palette - editorial, WCAG-friendly categorical */
+    --data-1: 8 110 159; /* deep blue */
+    --data-2: 219 117 44; /* amber */
+    --data-3: 15 118 110; /* teal */
+    --data-4: 124 58 107; /* plum */
+    --data-5: 80 117 64; /* moss */
+    --data-6: 160 68 52; /* clay */
+
+    /* Semantic */
+    --positive: 27 115 75;
+    --caution: 180 92 22;
+    --critical: 163 47 43;
+
+    /* shadcn compatibility */
+    --background: 250 248 243;
+    --foreground: 23 27 35;
+    --card: 255 255 255;
+    --card-foreground: 23 27 35;
+    --popover: 255 255 255;
+    --popover-foreground: 23 27 35;
+    --primary: 8 110 159;
+    --primary-foreground: 255 255 255;
+    --secondary: 243 239 232;
+    --secondary-foreground: 21 52 82;
+    --muted: 243 239 232;
+    --muted-foreground: 67 74 88;
+    --accent: 219 117 44;
+    --accent-foreground: 255 255 255;
+    --destructive: 163 47 43;
+    --destructive-foreground: 255 255 255;
+    --border: 217 213 204;
+    --input: 217 213 204;
+    --ring: 8 110 159;
+    --radius: 0.25rem;
+  }
+
+  * { border-color: rgb(var(--rule)); }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: rgb(var(--paper));
+    color: rgb(var(--ink));
+    font-family: var(--font-plex-sans), system-ui, sans-serif;
+    font-feature-settings: "ss01", "ss02", "cv01", "cv11";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, h4, .font-display {
+    font-family: var(--font-fraunces), Georgia, serif;
+    font-feature-settings: "ss01", "cv11", "salt";
+    letter-spacing: -0.015em;
+  }
+
+  .font-mono, .stat-digit {
+    font-family: var(--font-plex-mono), ui-monospace, monospace;
+    font-feature-settings: "tnum", "zero";
+  }
+
+  .tnum { font-variant-numeric: tabular-nums; }
+
+  .rule-editorial {
+    background: linear-gradient(to right, rgb(var(--kane-blue-ink)) 0 2rem, rgb(var(--rule)) 2rem 100%);
+    height: 2px;
+  }
+
+  *:focus-visible {
+    outline: 2px solid rgb(var(--kane-amber));
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  .text-balance { text-wrap: balance; }
+  .text-pretty { text-wrap: pretty; }
+
+  .bg-grain {
+    background-image:
+      radial-gradient(circle at 50% 0%, rgba(8, 110, 159, 0.04) 0%, transparent 60%),
+      repeating-linear-gradient(
+        0deg,
+        transparent 0px,
+        transparent 1px,
+        rgba(23, 27, 35, 0.012) 1px,
+        rgba(23, 27, 35, 0.012) 2px
+      );
   }
+
+  .ribbon-kane {
+    background: linear-gradient(
+      to right,
+      rgb(var(--kane-blue)) 0 33.33%,
+      rgb(var(--kane-blue-deep)) 33.33% 66.66%,
+      rgb(var(--kane-amber)) 66.66% 100%
+    );
+  }
+}
+
+.leaflet-container {
+  background: rgb(var(--paper-deep)) !important;
+  font-family: var(--font-plex-sans), sans-serif;
+}
+.leaflet-popup-content-wrapper {
+  border-radius: 2px !important;
+  box-shadow: 0 4px 20px rgba(23, 27, 35, 0.15) !important;
+}
+
+@media print {
+  body { background: white !important; }
+  .no-print, nav, header, footer { display: none !important; }
+  .print-only { display: block !important; }
+  .page-break { page-break-before: always; }
+  .report-print { max-width: 100% !important; padding: 0.5in !important; }
+  h1, h2, h3 { break-after: avoid; }
+  table, figure { break-inside: avoid; }
+}
+
+.driver-popover {
+  font-family: var(--font-plex-sans), sans-serif !important;
+  border-radius: 2px !important;
+  border: 1px solid rgb(var(--kane-blue-ink)) !important;
+}
+.driver-popover-title {
+  font-family: var(--font-fraunces), serif !important;
 }

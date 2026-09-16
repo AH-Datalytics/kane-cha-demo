@@ -71,7 +71,7 @@ export function SiteFooter() {
           <span className="font-mono uppercase tracking-[0.14em]">
             {t.lastUpdated}: {new Date("2026-04-10").toLocaleDateString(locale === "pl" ? "pl-PL" : locale === "es" ? "es-US" : "en-US", { year: "numeric", month: "long", day: "numeric" })}
           </span>
-          <span className="font-mono">v1.0 · RFQ 26-029-TK demonstration</span>
+          <span className="font-mono">{t.footer.demoVersion}</span>
         </div>
       </div>
     </footer>

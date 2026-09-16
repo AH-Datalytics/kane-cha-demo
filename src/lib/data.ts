@@ -439,7 +439,7 @@ export const HEADLINE_INDICATORS: HeadlineIndicator[] = [
   },
 ];
 
-/* ---------- CHA cycles (3 back-loaded per Addendum 3) ---------- */
+/* ---------- CHA cycles (3 back-loaded) ---------- */
 
 export type CHACycle = "2015 CHA" | "2019 CHA" | "2022 CHA" | "2024 CHA";
 export const CHA_CYCLES: CHACycle[] = ["2015 CHA", "2019 CHA", "2022 CHA", "2024 CHA"];

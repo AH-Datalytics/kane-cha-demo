@@ -141,7 +141,7 @@ export function HomeHero() {
           aria-hidden
           className="hidden md:block absolute top-4 right-8 font-mono text-[10px] uppercase tracking-[0.18em] text-ink-soft/50"
         >
-          RFQ 26-029-TK · Atlas v1.0
+          Kane Health Atlas · v1.0
         </div>
       </div>
 

@@ -29,7 +29,7 @@ const TOUR_COPY = {
     indicators: {
       title: "Headline indicators, three CHA cycles",
       description:
-        "Eight headline indicators back-loaded with four CHA cycles (2015, 2019, 2022, 2024) per Addendum 3. Click any indicator to open the full priority area page.",
+        "Eight headline indicators back-loaded with four CHA cycles (2015, 2019, 2022, 2024). Click any indicator to open the full priority area page.",
     },
     iplan: {
       title: "IPLAN priority areas",
@@ -64,7 +64,7 @@ const TOUR_COPY = {
     done: {
       title: "You're ready to explore",
       description:
-        "Everything Kane County asked for in the RFQ and Addenda is visible in the atlas. Start anywhere. Press the tour button in Data & Methods to replay this.",
+        "Every section of the atlas is open and ready. Start anywhere. Press the tour button in Data & Methods to replay this.",
     },
   },
   es: {
@@ -91,7 +91,7 @@ const TOUR_COPY = {
     indicators: {
       title: "Indicadores principales, tres ciclos de CHA",
       description:
-        "Ocho indicadores principales cargados con cuatro ciclos de CHA (2015, 2019, 2022, 2024) según el Addendum 3. Haga clic en cualquier indicador para abrir la página completa del área prioritaria.",
+        "Ocho indicadores principales cargados con cuatro ciclos de CHA (2015, 2019, 2022, 2024). Haga clic en cualquier indicador para abrir la página completa del área prioritaria.",
     },
     iplan: {
       title: "Áreas prioritarias IPLAN",
@@ -126,7 +126,7 @@ const TOUR_COPY = {
     done: {
       title: "Listo para explorar",
       description:
-        "Todo lo que el Condado de Kane pidió en el RFQ y los Addenda está visible en el atlas. Comience en cualquier lugar. Pulse el botón del recorrido en Datos y Métodos para repetirlo.",
+        "Cada sección del atlas está abierta y lista. Comience en cualquier lugar. Pulse el botón del recorrido en Datos y Métodos para repetirlo.",
     },
   },
   pl: {
@@ -153,7 +153,7 @@ const TOUR_COPY = {
     indicators: {
       title: "Wskaźniki nagłówkowe, trzy cykle CHA",
       description:
-        "Osiem wskaźników nagłówkowych wczytanych z czterema cyklami CHA (2015, 2019, 2022, 2024) zgodnie z Aneksem 3. Kliknij dowolny wskaźnik, aby otworzyć pełną stronę obszaru priorytetowego.",
+        "Osiem wskaźników nagłówkowych wczytanych z czterema cyklami CHA (2015, 2019, 2022, 2024). Kliknij dowolny wskaźnik, aby otworzyć pełną stronę obszaru priorytetowego.",
     },
     iplan: {
       title: "Obszary priorytetowe IPLAN",
@@ -188,7 +188,7 @@ const TOUR_COPY = {
     done: {
       title: "Gotowe do eksploracji",
       description:
-        "Wszystko, o co Hrabstwo Kane prosiło w RFQ i Aneksach, jest widoczne w atlasie. Zacznij gdziekolwiek. Naciśnij przycisk wycieczki w Danych i metodach, aby ją powtórzyć.",
+        "Każda sekcja atlasu jest otwarta i gotowa. Zacznij gdziekolwiek. Naciśnij przycisk wycieczki w Danych i metodach, aby ją powtórzyć.",
     },
   },
 } as const;
